@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.Sensor_Testing;
+package org.firstinspires.ftc.teamcode.Testing_OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.HardwareBot;
+import org.firstinspires.ftc.teamcode.Harbor_Days.HardwareBot;
 
 /**
  * Created by abhin on 8/29/2017.

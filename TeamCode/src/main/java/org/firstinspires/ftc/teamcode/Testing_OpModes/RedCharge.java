@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.Sensor_Testing;
+package org.firstinspires.ftc.teamcode.Testing_OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.HardwareBot;
-import org.firstinspires.ftc.teamcode.EmotionRecognition;
+import org.firstinspires.ftc.teamcode.Harbor_Days.HardwareBot;
+import org.firstinspires.ftc.teamcode.Harbor_Days.EmotionRecognition;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.DcMotor;
 

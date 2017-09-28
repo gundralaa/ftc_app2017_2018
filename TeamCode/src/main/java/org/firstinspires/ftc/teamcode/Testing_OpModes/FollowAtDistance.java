@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.Sensor_Testing;
+package org.firstinspires.ftc.teamcode.Testing_OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import org.firstinspires.ftc.teamcode.HardwareBot;
+import org.firstinspires.ftc.teamcode.Harbor_Days.HardwareBot;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
