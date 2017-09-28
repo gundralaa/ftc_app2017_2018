@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="sad" size="0.125900 0.125900" />
+    <ImageTarget name="happy" size="0.215900 0.215900" />
+    <ImageTarget name="angry" size="0.215900 0.215900" />
+  </Tracking>
+</QCARConfig>
