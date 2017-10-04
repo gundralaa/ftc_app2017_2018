@@ -35,7 +35,7 @@ public class HardwareBot {
 
     public DcMotor lMotor, rMotor, shooter;
     public Servo rBrow, lBrow, rMouth, lMouth;
-    //public ColorSensor mrColor;
+    //public ColorNumberTest mrColor;
     public I2cDevice mrColor;
     public I2cDeviceSynch mrColorReader;
     public ModernRoboticsI2cRangeSensor mrRange;

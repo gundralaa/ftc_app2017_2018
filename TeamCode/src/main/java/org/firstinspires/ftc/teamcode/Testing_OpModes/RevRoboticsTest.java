@@ -80,7 +80,7 @@ public class RevRoboticsTest extends LinearOpMode {
             telemetry.addData("Right Position: ", rightPosition);
             telemetry.addData("Left Position: ", leftPosition);
             telemetry.update();
-            
+
             idle();
         }
 

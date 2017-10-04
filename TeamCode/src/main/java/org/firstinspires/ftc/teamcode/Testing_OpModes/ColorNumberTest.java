@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.Harbor_Days.HardwareBot;
 /**
  * Created by abhin on 8/29/2017.
  */
-@Autonomous(name = "ColorSensor", group = "Test")
-public class ColorSensor extends LinearOpMode {
+@Autonomous(name = "ColorNumberTest", group = "Test")
+public class ColorNumberTest extends LinearOpMode {
     HardwareBot bot;
     byte[] colorCache;
     boolean buttonState = false;
