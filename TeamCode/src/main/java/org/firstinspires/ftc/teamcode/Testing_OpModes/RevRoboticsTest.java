@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "RevRoboticsTest", group = "")
 public class RevRoboticsTest extends LinearOpMode {
 
-    DcMotor leftMotor, rightMotor;
+    DcMotor leftMotor, rightMotor,liftMotor;
     Servo leftGrabServo, rightGrabServo;
     double lPower, rPower;
     boolean buttonWasOffX = true;
@@ -27,9 +27,11 @@ public class RevRoboticsTest extends LinearOpMode {
     public void runOpMode() {
         leftMotor = hardwareMap.dcMotor.get("lMotor");
         rightMotor = hardwareMap.dcMotor.get("rMotor");
+        liftMotor = hardwareMap.dcMotor.get("linearSlideMotor");
 
         leftGrabServo = hardwareMap.servo.get("lServo");
         rightGrabServo = hardwareMap.servo.get("rServo");
+
 
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -63,6 +65,7 @@ public class RevRoboticsTest extends LinearOpMode {
                 buttonWasOffX = true;
             }
             if (buttonWasOffY && gamepad1.y){
+                buttonWasOffY = false;
                 leftPosition -= 0.1;
                 rightPosition += 0.1;
             }
@@ -76,6 +79,14 @@ public class RevRoboticsTest extends LinearOpMode {
 
             if (rightPosition <= 1.0 && rightPosition >= -1.0){
                 rightGrabServo.setPosition(rightPosition);
+            }
+
+            if (gamepad1.a){
+              liftMotor.setPower(1.0);
+            } else if (gamepad1.b){
+                liftMotor.setPower(-1.0);
+            } else{
+                liftMotor.setPower(0.0);
             }
             telemetry.addData("Right Position: ", rightPosition);
             telemetry.addData("Left Position: ", leftPosition);
