@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.Testing_OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -14,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "RevRoboticsTest", group = "")
 public class RevRoboticsTest extends LinearOpMode {
 
-    DcMotor leftMotor, rightMotor;
+    DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor;
     Servo leftGrabServo, rightGrabServo;
     double lPower, rPower;
     boolean buttonWasOffX = true;
@@ -25,17 +23,25 @@ public class RevRoboticsTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        leftMotor = hardwareMap.dcMotor.get("lMotor");
-        rightMotor = hardwareMap.dcMotor.get("rMotor");
+        leftFrontMotor = hardwareMap.dcMotor.get("lFrontMotor");
+        rightFrontMotor = hardwareMap.dcMotor.get("rFrontMotor");
+        leftBackMotor = hardwareMap.dcMotor.get("lBackMotor");
+        rightBackMotor = hardwareMap.dcMotor.get("rBackMotor");
 
         leftGrabServo = hardwareMap.servo.get("lServo");
         rightGrabServo = hardwareMap.servo.get("rServo");
 
-        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Mode", "Waiting for start...");
         telemetry.update();
@@ -47,36 +53,24 @@ public class RevRoboticsTest extends LinearOpMode {
         while (opModeIsActive()) {
             lPower = steadyAcceleration(Range.clip(gamepad1.left_stick_y, -1.0, 1.0));
             rPower = steadyAcceleration(Range.clip(gamepad1.right_stick_y, -1.0, 1.0));
-            telemetry.addData("LeftMotorPower", lPower);
-            telemetry.addData("RightMotorPower", rPower);
 
+            telemetry.addData("Front Motor L Power", lPower);
+            telemetry.addData("Front Motor R Power", rPower);
+            telemetry.addData("Back Motor L Power", lPower);
+            telemetry.addData("Back Motor R Power", rPower);
+            telemetry.update();
 
-            leftMotor.setPower(lPower);
-            rightMotor.setPower(rPower);
+            leftFrontMotor.setPower(lPower);
+            rightFrontMotor.setPower(rPower);
+            leftBackMotor.setPower(lPower);
+            rightBackMotor.setPower(rPower);
 
-            if(buttonWasOffX && gamepad1.x){
-                buttonWasOffX = false;
-                leftPosition += 0.1;
-                rightPosition -= 0.1;
-            }
-            if (!gamepad1.x){
-                buttonWasOffX = true;
-            }
-            if (buttonWasOffY && gamepad1.y){
-                leftPosition -= 0.1;
-                rightPosition += 0.1;
-            }
-            if (!gamepad1.y){
-                buttonWasOffY = true;
+            if (gamepad1.y) {
+                closeServos(leftGrabServo, rightGrabServo);
+            } else if (gamepad1.x) {
+                openServos(leftGrabServo, rightGrabServo);
             }
 
-            if(leftPosition <= 1.0 && leftPosition >= -1.0){
-                leftGrabServo.setPosition(leftPosition);
-            }
-
-            if (rightPosition <= 1.0 && rightPosition >= -1.0){
-                rightGrabServo.setPosition(rightPosition);
-            }
             telemetry.addData("Right Position: ", rightPosition);
             telemetry.addData("Left Position: ", leftPosition);
             telemetry.update();
@@ -92,6 +86,38 @@ public class RevRoboticsTest extends LinearOpMode {
         }
         else {
             return cubic(raw);
+        }
+    }
+    // y pressed
+    public final double SERVO_INCREMENT = 0.01;
+    public final double LEFT_SERVO_MIN = 0.1;
+    public final double RIGHT_SERVO_MAX = 0.9;
+    public void closeServos(Servo left, Servo right) {
+        double currPosL, currPosR;
+        while (gamepad1.y) {
+            currPosL = left.getPosition();
+            currPosR = right.getPosition();
+            telemetry.addData("Left Position: ", currPosL);
+            telemetry.addData("Right Position: ", currPosR);
+            telemetry.update();
+            left.setPosition(Range.clip(currPosL - SERVO_INCREMENT, LEFT_SERVO_MIN, 1.0));
+            right.setPosition(Range.clip(currPosR + SERVO_INCREMENT, 0.0, RIGHT_SERVO_MAX));
+            idle();
+        }
+    }
+
+    // x pressed
+    public void openServos(Servo left, Servo right) {
+        double currPosL, currPosR;
+        while (gamepad1.x) {
+            currPosL = left.getPosition();
+            currPosR = right.getPosition();
+            telemetry.addData("Left Position: ", currPosL);
+            telemetry.addData("Right Position: ", currPosR);
+            telemetry.update();
+            left.setPosition(Range.clip(currPosL + SERVO_INCREMENT, LEFT_SERVO_MIN, 1.0));
+            right.setPosition(Range.clip(currPosR - SERVO_INCREMENT, -1.0, RIGHT_SERVO_MAX));
+            idle();
         }
     }
 
