@@ -90,8 +90,8 @@ public class RevRoboticsTest extends LinearOpMode {
     }
     // y pressed
     public final double SERVO_INCREMENT = 0.01;
-    public final double LEFT_SERVO_MIN = 0.1;
-    public final double RIGHT_SERVO_MAX = 0.9;
+    public final double LEFT_SERVO_MIN = 0.5;
+    public final double RIGHT_SERVO_MAX = 0.5;
     public void closeServos(Servo left, Servo right) {
         double currPosL, currPosR;
         while (gamepad1.y) {
