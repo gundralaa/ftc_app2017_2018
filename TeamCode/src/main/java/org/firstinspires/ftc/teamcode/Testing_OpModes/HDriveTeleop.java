@@ -100,6 +100,7 @@ public class HDriveTeleop extends LinearOpMode {
     public final double SERVO_INCREMENT = 0.01;
     public final double LEFT_SERVO_MIN = 0.4;
     public final double RIGHT_SERVO_MAX = 0.6;
+    
     public void closeServos(Servo left, Servo right) {
         double currPosL, currPosR;
         while (gamepad1.y) {
