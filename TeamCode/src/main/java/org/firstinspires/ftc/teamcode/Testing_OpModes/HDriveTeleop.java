@@ -1,22 +1,19 @@
 package org.firstinspires.ftc.teamcode.Testing_OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 /**
- * Created by abhin on 10/2/2017.
+ * Created by abhin on 10/12/2017.
  */
-@TeleOp(name = "RevRoboticsTest", group = "")
-public class RevRoboticsTest extends LinearOpMode {
 
+public class HDriveTeleop extends LinearOpMode {
 
-    DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor;
-
+    DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor, hDriveMotor, linearSlideMotor;
     Servo leftGrabServo, rightGrabServo;
-    double lPower, rPower;
+    double lPower, rPower, hPower, forwardPower, turningPower;
     boolean buttonWasOffX = true;
     boolean buttonWasOffY = true;
     double leftPosition = 1.0;
@@ -25,12 +22,12 @@ public class RevRoboticsTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         leftFrontMotor = hardwareMap.dcMotor.get("lFrontMotor");
         rightFrontMotor = hardwareMap.dcMotor.get("rFrontMotor");
         leftBackMotor = hardwareMap.dcMotor.get("lBackMotor");
         rightBackMotor = hardwareMap.dcMotor.get("rBackMotor");
-
+        hDriveMotor = hardwareMap.dcMotor.get("hDriveMotor");
+        linearSlideMotor = hardwareMap.dcMotor.get("linearSlideMotor");
 
         leftGrabServo = hardwareMap.servo.get("lServo");
         rightGrabServo = hardwareMap.servo.get("rServo");
@@ -47,29 +44,34 @@ public class RevRoboticsTest extends LinearOpMode {
         rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
-
         telemetry.addData("Mode", "Waiting for start...");
         telemetry.update();
         waitForStart();
         telemetry.addData("Mode", "Started");
+
         leftGrabServo.setPosition(leftPosition);
         rightGrabServo.setPosition(rightPosition);
 
         while (opModeIsActive()) {
-            lPower = steadyAcceleration(Range.clip(gamepad1.left_stick_y, -1.0, 1.0));
-            rPower = steadyAcceleration(Range.clip(gamepad1.right_stick_y, -1.0, 1.0));
+            turningPower = Range.clip(steadyAcceleration(gamepad1.left_stick_x),-1.0,1.0);
+            forwardPower = -(Range.clip(steadyAcceleration(gamepad1.right_stick_y), -1.0, 1.0));
+            hPower = Range.clip(steadyAcceleration(gamepad1.right_stick_x), -1.0, 1.0);
+
+            lPower = forwardPower + turningPower;
+            rPower = forwardPower - turningPower;
 
             telemetry.addData("Front Motor L Power", lPower);
             telemetry.addData("Front Motor R Power", rPower);
             telemetry.addData("Back Motor L Power", lPower);
             telemetry.addData("Back Motor R Power", rPower);
+            telemetry.addData("H Bridge Motor Power", hPower );
             telemetry.update();
 
             leftFrontMotor.setPower(lPower);
             rightFrontMotor.setPower(rPower);
             leftBackMotor.setPower(lPower);
             rightBackMotor.setPower(rPower);
-
+            hDriveMotor.setPower(hPower);
 
             if (gamepad1.y) {
                 closeServos(leftGrabServo, rightGrabServo);
@@ -96,8 +98,8 @@ public class RevRoboticsTest extends LinearOpMode {
     }
     // y pressed
     public final double SERVO_INCREMENT = 0.01;
-    public final double LEFT_SERVO_MIN = 0.5;
-    public final double RIGHT_SERVO_MAX = 0.5;
+    public final double LEFT_SERVO_MIN = 0.4;
+    public final double RIGHT_SERVO_MAX = 0.6;
     public void closeServos(Servo left, Servo right) {
         double currPosL, currPosR;
         while (gamepad1.y) {
