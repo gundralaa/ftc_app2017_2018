@@ -25,10 +25,8 @@ public class StraightLineAuton extends LinearOpMode {
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Mode", "waiting");
@@ -43,10 +41,9 @@ public class StraightLineAuton extends LinearOpMode {
 
         // testing for 90 degree turn
         setRightMotors(0.1);
-        rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         while (opModeIsActive()) {
             telemetry.addData("Right Front Encoder: ", rightFrontMotor.getCurrentPosition());
-            telemetry.addData("Right Back Encoder: ", rightBackMotor.getCurrentPosition());
+            telemetry.addData("Left Front Encoder: ", leftFrontMotor.getCurrentPosition());
             telemetry.update();
             idle();
         }

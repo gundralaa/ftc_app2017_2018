@@ -31,7 +31,7 @@ public class VuforiaPractice extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = ""; // get one
+        parameters.vuforiaLicenseKey = "AYjW+kn/////AAAAGckyQkdtk0g+vMt7+v21EQwSR82nxrrI34xlR+F75StLY+q3kjvWvgZiO0rBImulRIdCD4IjzWtqgZ8lPunOWuhUUi5eERTExNybyTwhn4GpdRr2XkcN+5uFD+5ZRoMfgx+z4RL4ONOLGWVMD30/VhwSM5vvkKB9C1VyGK0DyKcidSfxW8yhL1BKR2J0B5DtRtDW91hzalAEH2BfKE2+ee/F8f0HQ67DE5nnoVqrnT+THXWFb9W6OOBLszYdHTkUMtMV5U0RQxNuTBkeYGHtgcy17ULkQLY9Lnv0pqCLKdvlz4P3gtUAHPs/kr1cfzcaCS4iRY+ZlwxxLIKSazd0u4NSBjhH/f+zKJMaL/uVG2j4"; // get one
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
@@ -64,6 +64,7 @@ public class VuforiaPractice extends LinearOpMode {
         while (true) { // will break somewhere... hopefully on seeing a recognizable trackable
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+                telemetry.addData("Mark Seen = ", "NONE");
                 seenMark = vuMark;
                 break;
             }
@@ -84,7 +85,7 @@ public class VuforiaPractice extends LinearOpMode {
             rightMotor.setTargetPosition(DISTANCE_TO_RIGHT + RIGHT_MOTOR_OFFSET);
         }
         telemetry.update();
-
+        /*
         double targetPower = 0.25;
         accelerate(leftMotor, rightMotor, 0.25); // may not be necessary
         rightMotor.setPower(targetPower + 0.05); // drive in an arc to make rotation possible once near gate thing end
@@ -116,6 +117,7 @@ public class VuforiaPractice extends LinearOpMode {
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // now move far enough forward to place block
         // now release block
+        */
 
     }
 

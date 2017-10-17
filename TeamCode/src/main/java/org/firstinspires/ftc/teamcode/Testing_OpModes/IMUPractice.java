@@ -51,8 +51,8 @@ public class IMUPractice extends LinearOpMode {
         // initializing vuforia will go here
 
 
-        leftMotor = hardwareMap.dcMotor.get("lMotor");
-        rightMotor = hardwareMap.dcMotor.get("rMotor");
+        leftMotor = hardwareMap.dcMotor.get("lFrontMotor");
+        rightMotor = hardwareMap.dcMotor.get("rFrontMotor");
 
         telemetry.addData("Mode", "Waiting for start");
         telemetry.update();
