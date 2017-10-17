@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 public class VuforiaPractice extends LinearOpMode {
     // oh boy
     VuforiaLocalizer vuforia;
-    DcMotor leftMotor, rightMotor;
+    DcMotor leftFrontMotor, rightFrontMotor;
     Servo leftGrabServo, rightGrabServo;
 
     // these will have to be CALIBRATED
@@ -38,16 +38,16 @@ public class VuforiaPractice extends LinearOpMode {
         VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         VuforiaTrackable relicTemplate = relicTrackables.get(0);
 
-        leftMotor = hardwareMap.dcMotor.get("lMotor");
-        rightMotor = hardwareMap.dcMotor.get("rMotor");
+        leftFrontMotor = hardwareMap.dcMotor.get("lFrontMotor");
+        rightFrontMotor = hardwareMap.dcMotor.get("rFrontMotor");
         leftGrabServo = hardwareMap.servo.get("lServo");
         rightGrabServo = hardwareMap.servo.get("rServo");
 
-        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Mode", "Waiting for start");
         telemetry.update();
@@ -55,13 +55,13 @@ public class VuforiaPractice extends LinearOpMode {
         telemetry.addData("Mode", "Running");
         telemetry.update();
 
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
+        leftFrontMotor.setPower(0);
+        rightFrontMotor.setPower(0);
 
         relicTrackables.activate();
-        RelicRecoveryVuMark seenMark;
+        RelicRecoveryVuMark seenMark=null;
 
-        while (true) { // will break somewhere... hopefully on seeing a recognizable trackable
+        while (true && opModeIsActive()) { // will break somewhere... hopefully on seeing a recognizable trackable
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
                 telemetry.addData("Mark Seen = ", "NONE");
@@ -73,16 +73,16 @@ public class VuforiaPractice extends LinearOpMode {
 
         if (seenMark == RelicRecoveryVuMark.LEFT) {
             telemetry.addData("Mark Seen = ", "LEFT");
-            leftMotor.setTargetPosition(DISTANCE_TO_LEFT);
-            rightMotor.setTargetPosition(DISTANCE_TO_LEFT + RIGHT_MOTOR_OFFSET);
+            leftFrontMotor.setTargetPosition(DISTANCE_TO_LEFT);
+            rightFrontMotor.setTargetPosition(DISTANCE_TO_LEFT + RIGHT_MOTOR_OFFSET);
         } else if (seenMark == RelicRecoveryVuMark.CENTER) {
             telemetry.addData("Mark Seen = ", "CENTER");
-            leftMotor.setTargetPosition(DISTANCE_TO_CENTER);
-            rightMotor.setTargetPosition(DISTANCE_TO_CENTER + RIGHT_MOTOR_OFFSET);
+            leftFrontMotor.setTargetPosition(DISTANCE_TO_CENTER);
+            rightFrontMotor.setTargetPosition(DISTANCE_TO_CENTER + RIGHT_MOTOR_OFFSET);
         } else {
             telemetry.addData("Mark Seen = ", "RIGHT");
-            leftMotor.setTargetPosition(DISTANCE_TO_RIGHT);
-            rightMotor.setTargetPosition(DISTANCE_TO_RIGHT + RIGHT_MOTOR_OFFSET);
+            leftFrontMotor.setTargetPosition(DISTANCE_TO_RIGHT);
+            rightFrontMotor.setTargetPosition(DISTANCE_TO_RIGHT + RIGHT_MOTOR_OFFSET);
         }
         telemetry.update();
         /*

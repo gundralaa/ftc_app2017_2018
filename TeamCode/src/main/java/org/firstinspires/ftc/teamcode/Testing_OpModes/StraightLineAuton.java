@@ -36,7 +36,7 @@ public class StraightLineAuton extends LinearOpMode {
         telemetry.update();
 
         // straight to in front of fence
-        runToTarget(60*2.54, 0.25);
+        runToTarget(4, 0.25);
         sleep(200);
 
         // testing for 90 degree turn
@@ -51,7 +51,7 @@ public class StraightLineAuton extends LinearOpMode {
     }
 
     public double inchesToEncoder(double inches) {
-        return 280 * inches;
+        return (1120 / (4 * Math.PI)) * inches;
     }
 
     public void runToTarget(double inches, double power) {
@@ -60,12 +60,19 @@ public class StraightLineAuton extends LinearOpMode {
         // only using front motors for encoders
         leftFrontMotor.setTargetPosition(count);
         rightFrontMotor.setTargetPosition(count);
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         setMotors(power);
-        while (leftFrontMotor.isBusy() || rightFrontMotor.isBusy()) {
-            continue;
+        while ((leftFrontMotor.isBusy() || rightFrontMotor.isBusy()) && opModeIsActive()) {
+            telemetry.addData("Right Front Encoder: ", rightFrontMotor.getCurrentPosition());
+            telemetry.addData("Left Front Encoder: ", leftFrontMotor.getCurrentPosition());
+            telemetry.update();
+
         }
         setMotors(0.0);
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
