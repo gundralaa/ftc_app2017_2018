@@ -87,34 +87,34 @@ public class VuforiaPractice extends LinearOpMode {
         telemetry.update();
         /*
         double targetPower = 0.25;
-        accelerate(leftMotor, rightMotor, 0.25); // may not be necessary
-        rightMotor.setPower(targetPower + 0.05); // drive in an arc to make rotation possible once near gate thing end
-        while (opModeIsActive() && (leftMotor.isBusy() || rightMotor.isBusy())) {
-            telemetry.addData("lPosition = ", leftMotor.getCurrentPosition());
-            telemetry.addData("rPosition = ", rightMotor.getCurrentPosition());
+        accelerate(leftFrontMotor, rightFrontMotor, 0.25); // may not be necessary
+        rightFrontMotor.setPower(targetPower + 0.05); // drive in an arc to make rotation possible once near gate thing end
+        while (opModeIsActive() && (leftFrontMotor.isBusy() || rightFrontMotor.isBusy())) {
+            telemetry.addData("lPosition = ", leftFrontMotor.getCurrentPosition());
+            telemetry.addData("rPosition = ", rightFrontMotor.getCurrentPosition());
             telemetry.update();
             idle();
         }
-        leftMotor.setPower(0.0);
-        rightMotor.setPower(0.0);
-        int turnOffset = rightMotor.getCurrentPosition() - leftMotor.getCurrentPosition();
+        leftFrontMotor.setPower(0.0);
+        rightFrontMotor.setPower(0.0);
+        int turnOffset = rightFrontMotor.getCurrentPosition() - leftFrontMotor.getCurrentPosition();
 
-        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftMotor.setTargetPosition(TURN45 + turnOffset);
-        rightMotor.setTargetPosition(-1 * (TURN45 - turnOffset));
-        accelerate(leftMotor, rightMotor, 0.25);
-        while (opModeIsActive() && (leftMotor.isBusy() || rightMotor.isBusy())) {
-            telemetry.addData("lPosition = ", leftMotor.getCurrentPosition());
-            telemetry.addData("rPosition = ", rightMotor.getCurrentPosition());
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFrontMotor.setTargetPosition(TURN45 + turnOffset);
+        rightFrontMotor.setTargetPosition(-1 * (TURN45 - turnOffset));
+        accelerate(leftFrontMotor, rightFrontMotor, 0.25);
+        while (opModeIsActive() && (leftFrontMotor.isBusy() || rightFrontMotor.isBusy())) {
+            telemetry.addData("lPosition = ", leftFrontMotor.getCurrentPosition());
+            telemetry.addData("rPosition = ", rightFrontMotor.getCurrentPosition());
             telemetry.update();
             idle();
         }
 
-        leftMotor.setPower(0.0);
-        rightMotor.setPower(0.0);
-        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFrontMotor.setPower(0.0);
+        rightFrontMotor.setPower(0.0);
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // now move far enough forward to place block
         // now release block
         */

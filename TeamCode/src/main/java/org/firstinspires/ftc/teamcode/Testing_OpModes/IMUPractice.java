@@ -5,10 +5,8 @@ package org.firstinspires.ftc.teamcode.Testing_OpModes;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -28,7 +26,7 @@ import java.util.Locale;
 @Autonomous(name="IMUStuff", group="")
 public class IMUPractice extends LinearOpMode {
     BNO055IMU imu;
-    DcMotor leftMotor, rightMotor;
+    DcMotor leftFrontMotor, rightFrontMotor;
 
     Orientation angles;
     Acceleration gravity;
@@ -51,8 +49,8 @@ public class IMUPractice extends LinearOpMode {
         // initializing vuforia will go here
 
 
-        leftMotor = hardwareMap.dcMotor.get("lFrontMotor");
-        rightMotor = hardwareMap.dcMotor.get("rFrontMotor");
+        leftFrontMotor = hardwareMap.dcMotor.get("lFrontMotor");
+        rightFrontMotor = hardwareMap.dcMotor.get("rFrontMotor");
 
         telemetry.addData("Mode", "Waiting for start");
         telemetry.update();
@@ -62,12 +60,21 @@ public class IMUPractice extends LinearOpMode {
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-        //Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        leftMotor.setPower(0.25);
-        while (opModeIsActive()) {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        leftFrontMotor.setPower(0.25);
+        double time = getRuntime();
+        while (opModeIsActive() && (getRuntime() - time > 2000)) {
             telemetry.update();
         }
-        leftMotor.setPower(0.0);
+        leftFrontMotor.setPower(0.0);
+        sleep(500);
+        // 25 degree turn
+        double initialAngle = angles.firstAngle;
+        leftFrontMotor.setPower(0.25);
+        while (angles.firstAngle < initialAngle + 25) {
+            telemetry.update();
+        }
+        leftFrontMotor.setPower(0.0);
     }
 
     public void composeTelemetry() {
