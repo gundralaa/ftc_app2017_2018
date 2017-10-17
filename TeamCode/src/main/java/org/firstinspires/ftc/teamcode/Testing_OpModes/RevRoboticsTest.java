@@ -12,7 +12,9 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "RevRoboticsTest", group = "")
 public class RevRoboticsTest extends LinearOpMode {
 
+
     DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor;
+
     Servo leftGrabServo, rightGrabServo;
     double lPower, rPower;
     boolean buttonWasOffX = true;
@@ -23,10 +25,12 @@ public class RevRoboticsTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
         leftFrontMotor = hardwareMap.dcMotor.get("lFrontMotor");
         rightFrontMotor = hardwareMap.dcMotor.get("rFrontMotor");
         leftBackMotor = hardwareMap.dcMotor.get("lBackMotor");
         rightBackMotor = hardwareMap.dcMotor.get("rBackMotor");
+
 
         leftGrabServo = hardwareMap.servo.get("lServo");
         rightGrabServo = hardwareMap.servo.get("rServo");
@@ -42,6 +46,7 @@ public class RevRoboticsTest extends LinearOpMode {
         leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
+
 
         telemetry.addData("Mode", "Waiting for start...");
         telemetry.update();
@@ -64,6 +69,7 @@ public class RevRoboticsTest extends LinearOpMode {
             rightFrontMotor.setPower(rPower);
             leftBackMotor.setPower(lPower);
             rightBackMotor.setPower(rPower);
+
 
             if (gamepad1.y) {
                 closeServos(leftGrabServo, rightGrabServo);
