@@ -28,6 +28,9 @@ public class RedNear extends LinearOpMode {
         //TODO HardwareBot Initialization
         HardwareBot bot = new HardwareBot();
         bot.init(hardwareMap);
+        // set servos to close upon initialization
+        bot.leftGrabServo.setPosition(1.0);
+        bot.rightGrabServo.setPosition(0.0);
         //TODO Calibrate the Light Sensor
         telemetry.addData("Status: ","Initilization Complete");
         telemetry.update();
@@ -81,31 +84,9 @@ public class RedNear extends LinearOpMode {
         bot.rightFrontMotor.setPower(0.0);
     }
 
-    public double inchesToEncoder(double inches) {
-        return (1120 / (4 * Math.PI)) * inches;
-    }
-
-    public void runToTarget(double inches, double power, HardwareBot bot) {
-        int count = (int)Math.floor(inchesToEncoder(inches));
-
-        // only using front motors for encoders
-        bot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bot.leftFrontMotor.setTargetPosition(count);
-        bot.rightFrontMotor.setTargetPosition(count);
-
-        setMotors(power);
-        while ((bot.leftFrontMotor.isBusy() || bot.rightFrontMotor.isBusy()) && opModeIsActive()) {
-            telemetry.addData("Right Front Encoder: ", bot.rightFrontMotor.getCurrentPosition());
-            telemetry.addData("Left Front Encoder: ", bot.leftFrontMotor.getCurrentPosition());
-            telemetry.update();
-
-        }
-        setMotors(0.0);
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void releaseGlyph(HardwareBot bot) {
+        bot.leftGrabServo.setPosition(0.7);
+        bot.rightGrabServo.setPosition(0.3);
     }
 
 }
