@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 public class RedNear extends LinearOpMode {
     RelicRecoveryVuMark seenMark;
     ElapsedTime runtime = new ElapsedTime();
+    double timeOutS = 5.0;
     @Override
     public void runOpMode() throws InterruptedException {
         //TODO HardwareBot Initialization
@@ -26,6 +27,7 @@ public class RedNear extends LinearOpMode {
         waitForStart();
         //TODO Vuforia Trackables Activate
         //Loop For a certain amount of time until the Image is Seen
+        runtime.reset();
         while (seenMark != RelicRecoveryVuMark.UNKNOWN || runtime.seconds() < timeOutS) { // will break somewhere... hopefully on seeing a recognizable trackable
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
@@ -34,6 +36,19 @@ public class RedNear extends LinearOpMode {
             }
             idle();
         }
+
+        //TODO Drive until the light sensor sees a large change in light
+        
+
+        //TODO If the seenMark is null then set to a default
+
+        //TODO Encoder Drive Forward based on the seen Mark
+
+        //TODO Turn 90 based on IMU
+
+        //TODO Drive Forward a constant Distance Encoder Drive
+
+        //TODO Release the Glyph
 
     }
 
