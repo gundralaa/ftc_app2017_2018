@@ -18,8 +18,8 @@ public class RedNear extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //TODO HardwareBot Initialization
-        //TODO Start the Vuforia Object
-        //TODO Calibrate the IMU
+        HardwareBot bot = new HardwareBot();
+        bot.init(hardwareMap);
         //TODO Calibrate the Light Sensor
         telemetry.addData("Status: ","Initilization Complete");
         telemetry.update();
