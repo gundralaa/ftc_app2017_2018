@@ -23,6 +23,7 @@ public class RedNear extends LinearOpMode {
     RelicRecoveryVuMark seenMark;
     ElapsedTime runtime = new ElapsedTime();
     double timeOutS = 5.0;
+    double distInInches;
     @Override
     public void runOpMode() throws InterruptedException {
         //TODO HardwareBot Initialization
@@ -51,9 +52,28 @@ public class RedNear extends LinearOpMode {
         Functions.setMotors(bot, 0.0);
 
         //TODO If the seenMark is null then set to a default
-        if(seenMark == )
+        if(seenMark == RelicRecoveryVuMark.UNKNOWN){
+            seenMark = RelicRecoveryVuMark.RIGHT;
+        }
 
         //TODO Encoder Drive Forward based on the seen Mark
+        switch (seenMark){
+            case RIGHT:
+                distInInches = 6.0;
+                //6 inches
+                Functions.runToTarget(bot,distInInches,0.25,this);
+                break;
+            case CENTER:
+                distInInches = 8.0;
+                // 8 inches
+                Functions.runToTarget(bot, distInInches, 0.25, this);
+                break;
+            case LEFT:
+                distInInches = 8.0;
+                // 8 inches
+                Functions.runToTarget(bot, distInInches, 0.25, this);
+                break;
+        }
 
         //TODO Turn 90 based on IMU
 
@@ -81,31 +101,5 @@ public class RedNear extends LinearOpMode {
         bot.rightFrontMotor.setPower(0.0);
     }
 
-    public double inchesToEncoder(double inches) {
-        return (1120 / (4 * Math.PI)) * inches;
-    }
-
-    public void runToTarget(double inches, double power, HardwareBot bot) {
-        int count = (int)Math.floor(inchesToEncoder(inches));
-
-        // only using front motors for encoders
-        bot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bot.leftFrontMotor.setTargetPosition(count);
-        bot.rightFrontMotor.setTargetPosition(count);
-
-        setMotors(power);
-        while ((bot.leftFrontMotor.isBusy() || bot.rightFrontMotor.isBusy()) && opModeIsActive()) {
-            telemetry.addData("Right Front Encoder: ", bot.rightFrontMotor.getCurrentPosition());
-            telemetry.addData("Left Front Encoder: ", bot.leftFrontMotor.getCurrentPosition());
-            telemetry.update();
-
-        }
-        setMotors(0.0);
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
 
 }
