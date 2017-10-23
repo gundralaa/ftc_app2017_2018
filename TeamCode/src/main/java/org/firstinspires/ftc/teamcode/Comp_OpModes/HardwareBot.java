@@ -20,6 +20,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import java.util.Locale;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 /**
  * Created by saeli on 10/23/2017.
@@ -31,10 +32,14 @@ public class HardwareBot {
     Servo leftGrabServo, rightGrabServo;
     BNO055IMU imu;
     HardwareMap lmap;
+    ColorSensor colorSensor;
 
     public void init(HardwareMap map) {
         lmap = map;
 
+        // Color sensor
+        colorSensor = lmap.get(ColorSensor.class, "sensor_color_distance");
+        
         // Motors
         leftFrontMotor = lmap.dcMotor.get("lFrontMotor");
         rightFrontMotor = lmap.dcMotor.get("rFrontMotor");
