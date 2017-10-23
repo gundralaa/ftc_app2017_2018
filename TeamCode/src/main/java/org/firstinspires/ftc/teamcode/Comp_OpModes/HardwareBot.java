@@ -39,7 +39,7 @@ public class HardwareBot {
 
         // Color sensor
         colorSensor = lmap.get(ColorSensor.class, "sensor_color_distance");
-        
+
         // Motors
         leftFrontMotor = lmap.dcMotor.get("lFrontMotor");
         rightFrontMotor = lmap.dcMotor.get("rFrontMotor");

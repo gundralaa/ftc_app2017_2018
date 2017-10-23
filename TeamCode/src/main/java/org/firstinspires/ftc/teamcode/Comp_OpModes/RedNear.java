@@ -4,6 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
@@ -52,5 +58,49 @@ public class RedNear extends LinearOpMode {
 
     }
 
+    public void turn90(HardwareBot bot) {
+        double turnPower = 0.25;
+
+        Orientation angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double initialAngle = angles.firstAngle;
+        bot.leftFrontMotor.setPower(turnPower);
+        bot.leftBackMotor.setPower(turnPower);
+        bot.rightBackMotor.setPower(-1 *turnPower);
+        bot.leftBackMotor.setPower(-1 *turnPower);
+        while (angles.firstAngle < initialAngle + 90 && opModeIsActive()) {
+            idle();
+        }
+        bot.leftBackMotor.setPower(0.0);
+        bot.leftFrontMotor.setPower(0.0);
+        bot.rightBackMotor.setPower(0.0);
+        bot.rightFrontMotor.setPower(0.0);
+    }
+
+    public double inchesToEncoder(double inches) {
+        return (1120 / (4 * Math.PI)) * inches;
+    }
+
+    public void runToTarget(double inches, double power, HardwareBot bot) {
+        int count = (int)Math.floor(inchesToEncoder(inches));
+
+        // only using front motors for encoders
+        bot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bot.leftFrontMotor.setTargetPosition(count);
+        bot.rightFrontMotor.setTargetPosition(count);
+
+        setMotors(power);
+        while ((bot.leftFrontMotor.isBusy() || bot.rightFrontMotor.isBusy()) && opModeIsActive()) {
+            telemetry.addData("Right Front Encoder: ", bot.rightFrontMotor.getCurrentPosition());
+            telemetry.addData("Left Front Encoder: ", bot.leftFrontMotor.getCurrentPosition());
+            telemetry.update();
+
+        }
+        setMotors(0.0);
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
 
 }
