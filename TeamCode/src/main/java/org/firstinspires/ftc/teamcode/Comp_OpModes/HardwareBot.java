@@ -27,12 +27,13 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
  */
 
 public class HardwareBot {
-    VuforiaLocalizer vuforia;
-    DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor, hDriveMotor, linearSlideMotor;
-    Servo leftGrabServo, rightGrabServo;
-    BNO055IMU imu;
-    HardwareMap lmap;
-    ColorSensor colorSensor;
+    public VuforiaLocalizer vuforia;
+    public VuforiaTrackable relicTemplate;
+    public DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor, hDriveMotor, linearSlideMotor;
+    public Servo leftGrabServo, rightGrabServo;
+    public BNO055IMU imu;
+    public HardwareMap lmap;
+    public ColorSensor colorSensor;
 
     public void init(HardwareMap map) {
         lmap = map;
@@ -67,7 +68,7 @@ public class HardwareBot {
         this.vuforia = ClassFactory.createVuforiaLocalizer(vufParameters);
 
         VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTemplate = relicTrackables.get(0);
 
         // IMU
         BNO055IMU.Parameters imuParameters = new BNO055IMU.Parameters();
