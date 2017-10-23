@@ -69,19 +69,19 @@ public class HDriveTeleop extends LinearOpMode {
 
             switch (config) {
                 case TANK:
-                    turningPower = -Range.clip(array(gamepad1.right_stick_x), -1.0, 1.0);
-                    forwardPower = -(Range.clip(array(gamepad1.right_stick_y), -1.0, 1.0));
-                    hPower = Range.clip(array(gamepad1.left_stick_x), -1.0, 1.0);
+                    turningPower = -Range.clip((gamepad1.right_stick_x), -1.0, 1.0);
+                    forwardPower = -(Range.clip((gamepad1.right_stick_y), -1.0, 1.0));
+                    hPower = Range.clip((gamepad1.left_stick_x), -0.5, 0.5);
 
                     lPower = forwardPower + turningPower;
                     rPower = forwardPower - turningPower;
                     break;
 
                 case ARCADE:
-                    lPower = -Range.clip(array(gamepad1.left_stick_y), -1.0, 1.0);
-                    rPower = -Range.clip(array(gamepad1.right_stick_y), -1.0, 1.0);
-                    lTrigger = Range.clip(array(gamepad1.left_trigger), 0.0, 1.0);
-                    rTrigger = Range.clip(array(gamepad1.right_trigger), 0.0, 1.0);
+                    lPower = -Range.clip((gamepad1.left_stick_y), -1.0, 1.0);
+                    rPower = -Range.clip((gamepad1.right_stick_y), -1.0, 1.0);
+                    lTrigger = Range.clip((gamepad1.left_trigger), 0.0, 1.0);
+                    rTrigger = Range.clip((gamepad1.right_trigger), 0.0, 1.0);
 
                     hPower = lTrigger - rTrigger;
                     break;
@@ -117,9 +117,11 @@ public class HDriveTeleop extends LinearOpMode {
                 switch (config){
                     case TANK:
                         config = stickConfig.ARCADE;
+                        telemetry.addData("State: ", "Arcade");
                         break;
                     case ARCADE:
                         config = stickConfig.TANK;
+                        telemetry.addData("State: ", "Tank");
                         break;
                 }
             }
@@ -148,7 +150,7 @@ public class HDriveTeleop extends LinearOpMode {
 
     public void closeServos(Servo left, Servo right) {
         double currPosL, currPosR;
-        while (gamepad1.y) {
+        while (gamepad1.x) {
             currPosL = left.getPosition();
             currPosR = right.getPosition();
             telemetry.addData("Left Position: ", currPosL);
@@ -163,7 +165,7 @@ public class HDriveTeleop extends LinearOpMode {
     // x pressed
     public void openServos(Servo left, Servo right) {
         double currPosL, currPosR;
-        while (gamepad1.x) {
+        while (gamepad1.b) {
             currPosL = left.getPosition();
             currPosR = right.getPosition();
             telemetry.addData("Left Position: ", currPosL);
