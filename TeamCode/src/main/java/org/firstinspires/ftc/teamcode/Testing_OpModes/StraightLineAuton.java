@@ -3,21 +3,26 @@ package org.firstinspires.ftc.teamcode.Testing_OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 /**
  * Created by saeli on 10/16/2017.
  */
 
 
-// 1120 encoder counts for 4 inches of travel
+// 1120 encoder counts for 4 * PI inches of travel
 @Autonomous(name="Straight Line Autonomous", group="")
 public class StraightLineAuton extends LinearOpMode {
     DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor;
+    Servo leftGrabServo, rightGrabServo;
     @Override
     public void runOpMode() {
         leftFrontMotor = hardwareMap.dcMotor.get("lFrontMotor");
         rightFrontMotor = hardwareMap.dcMotor.get("rFrontMotor");
         leftBackMotor = hardwareMap.dcMotor.get("lBackMotor");
         rightBackMotor = hardwareMap.dcMotor.get("rBackMotor");
+
+        leftGrabServo = hardwareMap.servo.get("lServo");
+        rightGrabServo = hardwareMap.servo.get("rServo");
 
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -34,13 +39,17 @@ public class StraightLineAuton extends LinearOpMode {
         waitForStart();
         telemetry.addData("Mode", "running");
         telemetry.update();
+        // close arms around a block
+        leftGrabServo.setPosition(0.5);
+        rightGrabServo.setPosition(0.5);
 
         // straight to in front of fence
-        runToTarget(4, 0.25);
+        //runToTarget(4, 0.25);
         sleep(200);
 
         // testing for 90 degree turn
         setRightMotors(0.1);
+        setLeftMotors(-0.1);
         while (opModeIsActive()) {
             telemetry.addData("Right Front Encoder: ", rightFrontMotor.getCurrentPosition());
             telemetry.addData("Left Front Encoder: ", leftFrontMotor.getCurrentPosition());
