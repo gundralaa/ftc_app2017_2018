@@ -4,7 +4,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.teamcode.Comp_OpModes.HardwareBot;
+import org.firstinspires.ftc.teamcode.Resources.Functions;
 
 /**
  * Created by abhin on 10/2/2017.
@@ -12,126 +21,64 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "RevRoboticsTest", group = "")
 public class RevRoboticsTest extends LinearOpMode {
 
-
-    DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor;
-
-    Servo leftGrabServo, rightGrabServo;
-    double lPower, rPower;
-    boolean buttonWasOffX = true;
-    boolean buttonWasOffY = true;
-    double leftPosition = 1.0;
-    double rightPosition = 0.0;
-
+    final double GREY_THRESHOLD = 0.1;
+    RelicRecoveryVuMark seenMark;
+    ElapsedTime runtime = new ElapsedTime();
+    double timeOutS = 5.0;
+    double distInInches;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
-        leftFrontMotor = hardwareMap.dcMotor.get("lFrontMotor");
-        rightFrontMotor = hardwareMap.dcMotor.get("rFrontMotor");
-        leftBackMotor = hardwareMap.dcMotor.get("lBackMotor");
-        rightBackMotor = hardwareMap.dcMotor.get("rBackMotor");
+        //TODO HardwareBot Initialization
+        HardwareBot bot = new HardwareBot();
+        bot.init(hardwareMap);
+        // set servos to close upon initialization
+        bot.leftGrabServo.setPosition(1.0);
+        bot.rightGrabServo.setPosition(0.0);
 
-
-        leftGrabServo = hardwareMap.servo.get("lServo");
-        rightGrabServo = hardwareMap.servo.get("rServo");
-
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
-
-
-        telemetry.addData("Mode", "Waiting for start...");
+        //TODO Calibrate the Light Sensor
+        telemetry.addData("Status: ","Initilization Complete");
         telemetry.update();
+
         waitForStart();
-        telemetry.addData("Mode", "Started");
-        leftGrabServo.setPosition(leftPosition);
-        rightGrabServo.setPosition(rightPosition);
+        //TODO Vuforia Trackables Activate
+        //Loop For a certain amount of time until the Image is Seen
+        runtime.reset();
 
-        while (opModeIsActive()) {
-            lPower = steadyAcceleration(Range.clip(gamepad1.left_stick_y, -1.0, 1.0));
-            rPower = steadyAcceleration(Range.clip(gamepad1.right_stick_y, -1.0, 1.0));
+        //TODO Turn 90 based on IMU
+        turn90(bot);
 
-            telemetry.addData("Front Motor L Power", lPower);
-            telemetry.addData("Front Motor R Power", rPower);
-            telemetry.addData("Back Motor L Power", lPower);
-            telemetry.addData("Back Motor R Power", rPower);
-            telemetry.update();
+        //TODO Drive Forward a constant Distance Encoder Drive
+        Functions.runToTarget(bot,6.00,0.25,this);
 
-            leftFrontMotor.setPower(lPower);
-            rightFrontMotor.setPower(rPower);
-            leftBackMotor.setPower(lPower);
-            rightBackMotor.setPower(rPower);
+        //TODO Release the Glyph
+        releaseGlyph(bot);
 
+    }
 
-            if (gamepad1.y) {
-                closeServos(leftGrabServo, rightGrabServo);
-            } else if (gamepad1.x) {
-                openServos(leftGrabServo, rightGrabServo);
-            }
+    public void turn90(HardwareBot bot) {
+        double turnPower = 0.5;
 
-            telemetry.addData("Right Position: ", rightPosition);
-            telemetry.addData("Left Position: ", leftPosition);
-            telemetry.update();
-
+        Orientation angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double initialAngle = angles.firstAngle;
+        bot.leftFrontMotor.setPower(-1 *turnPower);
+        bot.leftBackMotor.setPower(-1 *turnPower);
+        bot.rightBackMotor.setPower(turnPower);
+        bot.rightFrontMotor.setPower(turnPower);
+        while (angles.firstAngle > -90 && opModeIsActive()) {
+            angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             idle();
         }
-
+        bot.leftBackMotor.setPower(0.0);
+        bot.leftFrontMotor.setPower(0.0);
+        bot.rightBackMotor.setPower(0.0);
+        bot.rightFrontMotor.setPower(0.0);
     }
 
-    public double steadyAcceleration(double raw) {
-        if (raw >= -0.5 && raw <= 0.5) {
-            return linear(raw);
-        }
-        else {
-            return cubic(raw);
-        }
-    }
-    // y pressed
-    public final double SERVO_INCREMENT = 0.01;
-    public final double LEFT_SERVO_MIN = 0.5;
-    public final double RIGHT_SERVO_MAX = 0.5;
-    public void closeServos(Servo left, Servo right) {
-        double currPosL, currPosR;
-        while (gamepad1.y) {
-            currPosL = left.getPosition();
-            currPosR = right.getPosition();
-            telemetry.addData("Left Position: ", currPosL);
-            telemetry.addData("Right Position: ", currPosR);
-            telemetry.update();
-            left.setPosition(Range.clip(currPosL - SERVO_INCREMENT, LEFT_SERVO_MIN, 1.0));
-            right.setPosition(Range.clip(currPosR + SERVO_INCREMENT, 0.0, RIGHT_SERVO_MAX));
-            idle();
-        }
-    }
 
-    // x pressed
-    public void openServos(Servo left, Servo right) {
-        double currPosL, currPosR;
-        while (gamepad1.x) {
-            currPosL = left.getPosition();
-            currPosR = right.getPosition();
-            telemetry.addData("Left Position: ", currPosL);
-            telemetry.addData("Right Position: ", currPosR);
-            telemetry.update();
-            left.setPosition(Range.clip(currPosL + SERVO_INCREMENT, LEFT_SERVO_MIN, 1.0));
-            right.setPosition(Range.clip(currPosR - SERVO_INCREMENT, -1.0, RIGHT_SERVO_MAX));
-            idle();
-        }
-    }
-
-    public double cubic(double x) {
-        return Math.pow(x, 3.0);
-    }
-
-    public double linear(double x) {
-        return x * 0.25;
+    public void releaseGlyph(HardwareBot bot) {
+        bot.leftGrabServo.setPosition(0.7);
+        bot.rightGrabServo.setPosition(0.3);
     }
 }

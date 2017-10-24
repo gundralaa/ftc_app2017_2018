@@ -79,10 +79,13 @@ public class RedNear extends LinearOpMode {
         }
 
         //TODO Turn 90 based on IMU
+        turn90(bot);
 
         //TODO Drive Forward a constant Distance Encoder Drive
+        Functions.runToTarget(bot,6.00,0.25,this);
 
         //TODO Release the Glyph
+        releaseGlyph(bot);
 
     }
 
