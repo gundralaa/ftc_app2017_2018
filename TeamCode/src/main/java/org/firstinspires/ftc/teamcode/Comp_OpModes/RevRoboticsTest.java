@@ -44,6 +44,13 @@ public class RevRoboticsTest extends LinearOpMode {
 
         waitForStart();
         //TODO Vuforia Trackables Activate
+        bot.relicTrackables.activate();
+        runtime.reset();
+        while (seenMark != RelicRecoveryVuMark.UNKNOWN || runtime.seconds() < timeOutS) { // will break somewhere... hopefully on seeing a recognizable trackable
+            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(bot.relicTemplate);
+            seenMark = vuMark;
+            idle();
+        }
         //Loop For a certain amount of time until the Image is Seen
         runtime.reset();
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);

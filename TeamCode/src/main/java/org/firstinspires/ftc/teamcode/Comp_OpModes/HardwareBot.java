@@ -28,7 +28,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
 public class HardwareBot {
     public VuforiaLocalizer vuforia;
-    public VuforiaTrackable relicTemplate;
+    public VuforiaTrackables relicTrackables;
+    VuforiaTrackable relicTemplate;
     public DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor, hDriveMotor, linearSlideMotor;
     public Servo leftGrabServo, rightGrabServo;
     public BNO055IMU imu;
@@ -74,7 +75,7 @@ public class HardwareBot {
         vufParameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         this.vuforia = ClassFactory.createVuforiaLocalizer(vufParameters);
 
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         relicTemplate = relicTrackables.get(0);
 
         // IMU

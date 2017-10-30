@@ -40,6 +40,7 @@ public class RedNear extends LinearOpMode {
 
         waitForStart();
         //TODO Vuforia Trackables Activate
+        bot.relicTrackables.activate();
         //Loop For a certain amount of time until the Image is Seen
         runtime.reset();
         while (seenMark != RelicRecoveryVuMark.UNKNOWN || runtime.seconds() < timeOutS) { // will break somewhere... hopefully on seeing a recognizable trackable
@@ -92,6 +93,41 @@ public class RedNear extends LinearOpMode {
         bot.rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //TODO Use The GYRO to Correct the Heading or The Z Angle of The Robot When it Goes Off The Ramp
+        angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double lpower, rpower;
+        if (angles.firstAngle < 0) {
+            lpower = -0.3;
+        } else if (angles.firstAngle > 0) {
+            lpower = 0.3;
+        } else { // no angle change
+            lpower = 0.0;
+        }
+        rpower = -1 * lpower;
+
+        bot.leftFrontMotor.setPower(lpower);
+        bot.leftBackMotor.setPower(lpower);
+        bot.rightBackMotor.setPower(rpower);
+        bot.rightFrontMotor.setPower(rpower);
+
+        if (angles.firstAngle < 0) {
+            while (angles.firstAngle < 0) {
+                angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                idle();
+            }
+
+        } else if (angles.firstAngle > 0) {
+            while (angles.firstAngle < 0) {
+                angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                idle();
+            }
+            
+        }
+        bot.leftFrontMotor.setPower(0.0);
+        bot.leftBackMotor.setPower(0.0);
+        bot.rightBackMotor.setPower(0.0);
+        bot.rightFrontMotor.setPower(0.0);
+
 
         //If the seenMark is null then set to a default
         if(seenMark == RelicRecoveryVuMark.UNKNOWN){
@@ -106,13 +142,13 @@ public class RedNear extends LinearOpMode {
                 runToTarget(bot,distInInches,0.25);
                 break;
             case CENTER:
-                distInInches = 8.0;
-                // 8 inches
+                distInInches = 14.0;
+                // 14 inches
                 runToTarget(bot, distInInches, 0.25);
                 break;
             case LEFT:
-                distInInches = 8.0;
-                // 8 inches
+                distInInches = 22.0;
+                // 22 inches
                 runToTarget(bot, distInInches, 0.25);
                 break;
         }
