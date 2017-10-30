@@ -24,6 +24,8 @@ public class RedNear extends LinearOpMode {
     ElapsedTime runtime = new ElapsedTime();
     double timeOutS = 5.0;
     double distInInches;
+    Orientation angles;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //TODO HardwareBot Initialization
@@ -45,44 +47,81 @@ public class RedNear extends LinearOpMode {
             seenMark = vuMark;
             idle();
         }
+        //Move Forward On Ramp
+        angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        //TODO Drive until the light sensor sees a large change in light
-        Functions.setMotors(bot, 0.75);
-        while (bot.colorSensor.alpha() > GREY_THRESHOLD){
-            telemetry.addData("Alpha", bot.colorSensor.alpha());
-            telemetry.update();
+        runToTarget(bot, 3.0, 0.25);
+
+        sleep(1000);
+
+        runToTarget(bot, 1.0, 0.25);
+
+        sleep(1000);
+
+        //Set Encoders to Different Mode
+        bot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bot.leftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bot.rightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //Set Power of Motors
+        bot.leftFrontMotor.setPower(0.4);
+        bot.leftBackMotor.setPower(0.4);
+        bot.rightBackMotor.setPower(0.4);
+        bot.rightFrontMotor.setPower(0.4);
+
+        // Get Current Y Axis Angle
+        angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        // Loop While Angle is More Negative the Zero
+        while (angles.secondAngle < -2 && opModeIsActive()) {
+            angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            idle();
         }
-        Functions.setMotors(bot, 0.0);
 
-        //TODO If the seenMark is null then set to a default
+        // Stop Motors
+        bot.leftFrontMotor.setPower(0.0);
+        bot.leftBackMotor.setPower(0.0);
+        bot.rightBackMotor.setPower(0.0);
+        bot.rightFrontMotor.setPower(0.0);
+
+        // Set Encoder Mode Again
+        bot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bot.leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bot.rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //TODO Use The GYRO to Correct the Heading or The Z Angle of The Robot When it Goes Off The Ramp
+
+        //If the seenMark is null then set to a default
         if(seenMark == RelicRecoveryVuMark.UNKNOWN){
             seenMark = RelicRecoveryVuMark.RIGHT;
         }
 
-        //TODO Encoder Drive Forward based on the seen Mark
+        //Encoder Drive Forward based on the seen Mark
         switch (seenMark){
             case RIGHT:
                 distInInches = 6.0;
                 //6 inches
-                Functions.runToTarget(bot,distInInches,0.25,this);
+                runToTarget(bot,distInInches,0.25);
                 break;
             case CENTER:
                 distInInches = 8.0;
                 // 8 inches
-                Functions.runToTarget(bot, distInInches, 0.25, this);
+                runToTarget(bot, distInInches, 0.25);
                 break;
             case LEFT:
                 distInInches = 8.0;
                 // 8 inches
-                Functions.runToTarget(bot, distInInches, 0.25, this);
+                runToTarget(bot, distInInches, 0.25);
                 break;
         }
 
-        //TODO Turn 90 based on IMU
+        //Turn 90 based on IMU
         turn90(bot);
 
         //TODO Drive Forward a constant Distance Encoder Drive
-        Functions.runToTarget(bot,6.00,0.25,this);
+        runToTarget(bot,6.00,0.25);
 
         //TODO Release the Glyph
         releaseGlyph(bot);
@@ -90,15 +129,16 @@ public class RedNear extends LinearOpMode {
     }
 
     public void turn90(HardwareBot bot) {
-        double turnPower = 0.25;
+        double turnPower = 0.3;
 
-        Orientation angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double initialAngle = angles.firstAngle;
         bot.leftFrontMotor.setPower(turnPower);
         bot.leftBackMotor.setPower(turnPower);
-        bot.rightBackMotor.setPower(-1 *turnPower);
-        bot.leftBackMotor.setPower(-1 *turnPower);
-        while (angles.firstAngle < initialAngle + 90 && opModeIsActive()) {
+        bot.rightBackMotor.setPower(-1 * turnPower);
+        bot.rightFrontMotor.setPower(-1 * turnPower);
+        while (angles.firstAngle > -90 && opModeIsActive()) {
+            angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             idle();
         }
         bot.leftBackMotor.setPower(0.0);
@@ -111,6 +151,41 @@ public class RedNear extends LinearOpMode {
     public void releaseGlyph(HardwareBot bot) {
         bot.leftGrabServo.setPosition(0.7);
         bot.rightGrabServo.setPosition(0.3);
+    }
+
+    public static double inchesToEncoder(double inches) {
+        return (1120 / (4 * Math.PI)) * inches;
+    }
+
+    public void runToTarget(HardwareBot bot, double inches, double power) {
+        int count = (int)Math.floor(inchesToEncoder(inches));
+
+        // only using front motors for encoders
+        bot.leftFrontMotor.setTargetPosition(bot.leftFrontMotor.getCurrentPosition() + (count));
+        bot.rightFrontMotor.setTargetPosition(bot.rightFrontMotor.getCurrentPosition() + count);
+        bot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        bot.leftFrontMotor.setPower(power);
+        bot.leftBackMotor.setPower(power);
+        bot.rightBackMotor.setPower(power);
+        bot.rightFrontMotor.setPower(power);
+
+        while ((bot.leftFrontMotor.isBusy() && bot.rightFrontMotor.isBusy()) && opModeIsActive()) {
+            telemetry.addData("Right Front Encoder: ", bot.rightFrontMotor.getCurrentPosition());
+            telemetry.addData("Left Front Encoder: ", bot.leftFrontMotor.getCurrentPosition());
+            telemetry.update();
+
+        }
+        bot.leftBackMotor.setPower(0.0);
+        bot.leftFrontMotor.setPower(0.0);
+        bot.rightBackMotor.setPower(0.0);
+        bot.rightFrontMotor.setPower(0.0);
+
+        bot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bot.leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
 }
