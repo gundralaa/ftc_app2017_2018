@@ -89,7 +89,7 @@ public class RevRoboticsTest extends LinearOpMode {
         bot.rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //TODO Turn 90 based on IMU
-        //turn90(bot);
+        turn90(bot);
 
         //TODO Drive Forward a constant Distance Encoder Drive
         //runToTarget(bot,6.00,0.25);

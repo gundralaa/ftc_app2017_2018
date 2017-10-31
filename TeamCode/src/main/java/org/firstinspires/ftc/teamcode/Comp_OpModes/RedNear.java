@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Resources.Functions;
 @Autonomous(name = "RedNear",group = "Auton")
 public class RedNear extends LinearOpMode {
     final double GREY_THRESHOLD = 0.1;
-    RelicRecoveryVuMark seenMark;
+    RelicRecoveryVuMark seenMark = RelicRecoveryVuMark.UNKNOWN;
     ElapsedTime runtime = new ElapsedTime();
     double timeOutS = 5.0;
     double distInInches;
@@ -32,22 +32,38 @@ public class RedNear extends LinearOpMode {
         HardwareBot bot = new HardwareBot();
         bot.init(hardwareMap);
         // set servos to close upon initialization
-        bot.leftGrabServo.setPosition(1.0);
-        bot.rightGrabServo.setPosition(0.0);
+        bot.leftGrabServo.setPosition(0.5);
+        bot.rightGrabServo.setPosition(0.5);
         //TODO Calibrate the Light Sensor
         telemetry.addData("Status: ","Initilization Complete");
         telemetry.update();
 
         waitForStart();
         //TODO Vuforia Trackables Activate
+        telemetry.addData("Status: ","Start reached");
+        telemetry.update();
         bot.relicTrackables.activate();
+        telemetry.addData("Status: ","Trackables activated");
+        telemetry.update();
         //Loop For a certain amount of time until the Image is Seen
         runtime.reset();
-        while (seenMark != RelicRecoveryVuMark.UNKNOWN || runtime.seconds() < timeOutS) { // will break somewhere... hopefully on seeing a recognizable trackable
+        telemetry.addData("Runtime: ", runtime.seconds());
+        telemetry.update();
+        while ((seenMark == RelicRecoveryVuMark.UNKNOWN && runtime.seconds() < timeOutS) && opModeIsActive()) { // will break somewhere... hopefully on seeing a recognizable trackable
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(bot.relicTemplate);
             seenMark = vuMark;
+            telemetry.addData("Runtime: ", runtime.seconds());
+            telemetry.update();
             idle();
         }
+        telemetry.addData("VUMARK", seenMark.name());
+        telemetry.update();
+
+        bot.linearSlideMotor.setPower(0.5);
+        sleep(400);
+        bot.linearSlideMotor.setPower(0.0);
+
+        sleep(500);
         //Move Forward On Ramp
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
@@ -66,10 +82,11 @@ public class RedNear extends LinearOpMode {
         bot.rightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Set Power of Motors
-        bot.leftFrontMotor.setPower(0.4);
-        bot.leftBackMotor.setPower(0.4);
-        bot.rightBackMotor.setPower(0.4);
-        bot.rightFrontMotor.setPower(0.4);
+        // 0.4 does work for this
+        bot.leftFrontMotor.setPower(0.25);
+        bot.leftBackMotor.setPower(0.25);
+        bot.rightBackMotor.setPower(0.25);
+        bot.rightFrontMotor.setPower(0.25);
 
         // Get Current Y Axis Angle
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -91,15 +108,18 @@ public class RedNear extends LinearOpMode {
         bot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bot.leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bot.rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        sleep(200);
 
-        //TODO Use The GYRO to Correct the Heading or The Z Angle of The Robot When it Goes Off The Ramp
+        //Use The GYRO to Correct the Heading or The Z Angle of The Robot When it Goes Off The Ramp
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        telemetry.addData("FirstAngle: ", angles.firstAngle);
+        telemetry.update();
 
         double lpower, rpower;
         if (angles.firstAngle < 0) {
-            lpower = -0.3;
+            lpower = -0.25;
         } else if (angles.firstAngle > 0) {
-            lpower = 0.3;
+            lpower = 0.25;
         } else { // no angle change
             lpower = 0.0;
         }
@@ -113,12 +133,16 @@ public class RedNear extends LinearOpMode {
         if (angles.firstAngle < 0) {
             while (angles.firstAngle < 0) {
                 angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("FirstAngle: ", angles.firstAngle);
+                telemetry.update();
                 idle();
             }
 
         } else if (angles.firstAngle > 0) {
             while (angles.firstAngle < 0) {
                 angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("FirstAngle: ", angles.firstAngle);
+                telemetry.update();
                 idle();
             }
             
@@ -157,10 +181,12 @@ public class RedNear extends LinearOpMode {
         turn90(bot);
 
         //TODO Drive Forward a constant Distance Encoder Drive
-        runToTarget(bot,6.00,0.25);
+        runToTarget(bot,4.00,0.25);
 
         //TODO Release the Glyph
         releaseGlyph(bot);
+
+        runToTarget(bot,5.0,0.25);
 
     }
 
@@ -169,11 +195,12 @@ public class RedNear extends LinearOpMode {
 
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double initialAngle = angles.firstAngle;
+        double targetAngle = initialAngle - 90;
         bot.leftFrontMotor.setPower(turnPower);
         bot.leftBackMotor.setPower(turnPower);
         bot.rightBackMotor.setPower(-1 * turnPower);
         bot.rightFrontMotor.setPower(-1 * turnPower);
-        while (angles.firstAngle > -90 && opModeIsActive()) {
+        while (angles.firstAngle > targetAngle && opModeIsActive()) {
             angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             idle();
         }
@@ -220,8 +247,6 @@ public class RedNear extends LinearOpMode {
 
         bot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        bot.leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bot.rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
 }
