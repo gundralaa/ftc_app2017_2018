@@ -17,11 +17,8 @@ import org.firstinspires.ftc.teamcode.Resources.Functions;
 /**
  * Created by abhin on 10/23/2017.
  */
-@Autonomous(name = "RedNear",group = "Auton")
-public class RedNear extends LinearOpMode {
-    RelicRecoveryVuMark seenMark = RelicRecoveryVuMark.UNKNOWN;
-    ElapsedTime runtime = new ElapsedTime();
-    double timeOutS = 5.0;
+@Autonomous(name = "RedNonVuforia",group = "Auton")
+public class RedNonVuforia extends LinearOpMode {
     double distInInches;
     Orientation angles;
 
@@ -41,23 +38,6 @@ public class RedNear extends LinearOpMode {
         //TODO Vuforia Trackables Activate
         telemetry.addData("Status: ","Start reached");
         telemetry.update();
-        bot.relicTrackables.activate();
-        telemetry.addData("Status: ","Trackables activated");
-        telemetry.update();
-        //Loop For a certain amount of time until the Image is Seen
-        runtime.reset();
-        telemetry.addData("Runtime: ", runtime.seconds());
-        telemetry.update();
-        while ((seenMark == RelicRecoveryVuMark.UNKNOWN && runtime.seconds() < timeOutS) && opModeIsActive()) { // will break somewhere... hopefully on seeing a recognizable trackable
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(bot.relicTemplate);
-            seenMark = vuMark;
-            telemetry.addData("Runtime: ", runtime.seconds());
-            telemetry.update();
-            idle();
-        }
-        telemetry.addData("VUMARK", seenMark.name());
-        telemetry.update();
-        angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         bot.linearSlideMotor.setPower(0.5);
         sleep(400);
@@ -65,7 +45,7 @@ public class RedNear extends LinearOpMode {
 
         sleep(500);
         //Move Forward On Ramp
-        // angles used to be here
+        angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         runToTarget(bot, 3.0, 0.25);
 
@@ -145,43 +125,25 @@ public class RedNear extends LinearOpMode {
                 telemetry.update();
                 idle();
             }
-            
+
         }
         bot.leftFrontMotor.setPower(0.0);
         bot.leftBackMotor.setPower(0.0);
         bot.rightBackMotor.setPower(0.0);
         bot.rightFrontMotor.setPower(0.0);
 
-
-        //If the seenMark is null then set to a default
-        if(seenMark == RelicRecoveryVuMark.UNKNOWN){
-            seenMark = RelicRecoveryVuMark.RIGHT;
-        }
-
         //Encoder Drive Forward based on the seen Mark
-        switch (seenMark){
-            case RIGHT:
-                distInInches = 6.0;
-                //6 inches
-                runToTarget(bot,distInInches,0.25);
-                break;
-            case CENTER:
-                distInInches = 14.0;
-                // 14 inches
-                runToTarget(bot, distInInches, 0.25);
-                break;
-            case LEFT:
-                distInInches = 22.0;
-                // 22 inches
-                runToTarget(bot, distInInches, 0.25);
-                break;
-        }
+        double inchesForward = 12.0;
+        runToTarget(bot, inchesForward, 0.25);
+        sleep(200);
 
-        //Turn 90 based on IMU
-        turn90(bot);
+        //Move in front of rightmost fence?
+        bot.hDriveMotor.setPower(0.75);
+        //Will need to be adjusted
+        sleep(1500);
 
         //TODO Drive Forward a constant Distance Encoder Drive
-        runToTarget(bot,4.00,0.25);
+        //runToTarget(bot,4.00,0.25);
 
         //TODO Release the Glyph
         releaseGlyph(bot);
@@ -250,3 +212,4 @@ public class RedNear extends LinearOpMode {
     }
 
 }
+

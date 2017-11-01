@@ -59,10 +59,10 @@ public class HDriveTeleop extends LinearOpMode {
         leftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        /*leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);*/
 
         telemetry.addData("Mode", "Waiting for start...");
         telemetry.update();
@@ -71,13 +71,23 @@ public class HDriveTeleop extends LinearOpMode {
 
         leftGrabServo.setPosition(leftPosition);
         rightGrabServo.setPosition(rightPosition);
-
+        boolean drivingSlow = false;
         while (opModeIsActive()) {
+            if (drivingSlow) {
+                lPower = Range.clip((linear(gamepad1.left_stick_y)), -1.0, 1.0);
+                rPower = Range.clip((linear(gamepad1.right_stick_y)), -1.0, 1.0);
+                lTrigger = Range.clip(cubic((gamepad1.left_trigger)), 0.0, 1.0);
+                rTrigger = Range.clip(cubic((gamepad1.right_trigger)), 0.0, 1.0);
+            } else {
+                lPower = Range.clip((cubic(gamepad1.left_stick_y)), -1.0, 1.0);
+                rPower = Range.clip((cubic(gamepad1.right_stick_y)), -1.0, 1.0);
+                lTrigger = Range.clip(cubic((gamepad1.left_trigger)), 0.0, 1.0);
+                rTrigger = Range.clip(cubic((gamepad1.right_trigger)), 0.0, 1.0);
+            }
 
-            lPower = Range.clip((cubic(gamepad1.left_stick_y)), -1.0, 1.0);
-            rPower = Range.clip((cubic(gamepad1.right_stick_y)), -1.0, 1.0);
-            lTrigger = Range.clip(cubic((gamepad1.left_trigger)), 0.0, 1.0);
-            rTrigger = Range.clip(cubic((gamepad1.right_trigger)), 0.0, 1.0);
+            if (gamepad1.left_bumper) {
+                drivingSlow = !(drivingSlow);
+            }
 
             hPower = lTrigger - rTrigger;
 
