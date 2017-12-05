@@ -31,16 +31,16 @@ public class HardwareBot {
     public VuforiaTrackables relicTrackables;
     VuforiaTrackable relicTemplate;
     public DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor, hDriveMotor, linearSlideMotor;
-    public Servo leftGrabServo, rightGrabServo;
+    public Servo leftGrabServo, rightGrabServo, verticalJewel, horizontalJewel;
     public BNO055IMU imu;
     public HardwareMap lmap;
     public ColorSensor colorSensor;
 
     public void init(HardwareMap map) {
         lmap = map;
-
+        //Trolled
         // Color sensor
-        colorSensor = lmap.get(ColorSensor.class, "sensor_color_distance");
+        colorSensor = lmap.get(ColorSensor.class, "sensor_color");
 
         // Motors
         leftFrontMotor = lmap.dcMotor.get("lFrontMotor");
@@ -51,6 +51,8 @@ public class HardwareBot {
         linearSlideMotor = lmap.dcMotor.get("linearSlideMotor");
         leftGrabServo = lmap.servo.get("lServo");
         rightGrabServo = lmap.servo.get("rServo");
+        verticalJewel = lmap.servo.get("vJewel"); // continuous
+        horizontalJewel = lmap.servo.get("hJewel");
 
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

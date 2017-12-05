@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Comp_OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -12,8 +13,8 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "HdriveTeleop", group = "Teleop")
 public class HDriveTeleop extends LinearOpMode {
 
-    DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor, hDriveMotor, linearSlideMotor;
-    Servo leftGrabServo, rightGrabServo;
+    DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor, hDriveMotor, linearSlideMotor, relicSlide;
+    Servo leftGrabServo, rightGrabServo, horizontalJewel, relicGrabber, relicRotater, verticalJewel;
     double lPower, rPower, hPower, forwardPower, turningPower, lTrigger, rTrigger;
     boolean buttonWasOffX = true;
     boolean buttonWasOffY = true;
@@ -36,9 +37,14 @@ public class HDriveTeleop extends LinearOpMode {
         rightBackMotor = hardwareMap.dcMotor.get("rBackMotor");
         hDriveMotor = hardwareMap.dcMotor.get("hDriveMotor");
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlideMotor");
+        relicSlide = hardwareMap.dcMotor.get("relicSlide");
 
         leftGrabServo = hardwareMap.servo.get("lServo");
         rightGrabServo = hardwareMap.servo.get("rServo");
+        verticalJewel = hardwareMap.servo.get("vJewel"); // continuous
+        horizontalJewel = hardwareMap.servo.get("hJewel"); // 180
+        relicRotater = hardwareMap.servo.get("rRotater");
+        relicGrabber = hardwareMap.servo.get("rGrabber");
 /*
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -71,9 +77,18 @@ public class HDriveTeleop extends LinearOpMode {
 
         leftGrabServo.setPosition(leftPosition);
         rightGrabServo.setPosition(rightPosition);
+        horizontalJewel.setPosition(0.0);
+        relicRotater.setPosition(0.6);
+        relicGrabber.setPosition(0.0);
         boolean drivingSlow = false;
         while (opModeIsActive()) {
-            if (drivingSlow) {
+            if (gamepad1.y) {
+                lPower = -0.25;
+                rPower = -0.25;
+            } else if (gamepad1.a) {
+                lPower = 0.25;
+                rPower = 0.25;
+            } else if (drivingSlow) {
                 lPower = Range.clip((linear(gamepad1.left_stick_y)), -1.0, 1.0);
                 rPower = Range.clip((linear(gamepad1.right_stick_y)), -1.0, 1.0);
                 lTrigger = Range.clip(cubic((gamepad1.left_trigger)), 0.0, 1.0);
@@ -103,18 +118,56 @@ public class HDriveTeleop extends LinearOpMode {
             rightBackMotor.setPower(rPower);
             hDriveMotor.setPower(hPower);
 
-            if (gamepad2.x || gamepad1.x) {
+            if (gamepad2.x) {
                 closeServos(leftGrabServo, rightGrabServo);
-            } else if (gamepad2.b || gamepad1.b) {
+            } else if (gamepad2.b) {
                 openServos(leftGrabServo, rightGrabServo);
             }
-            if(gamepad2.y|| gamepad1.y){
+            if(gamepad2.y){
                 linearSlideMotor.setPower(0.7);
             }
-            else if(gamepad2.a || gamepad1.a){
+            else if(gamepad2.a){
                 linearSlideMotor.setPower(-0.7);
             } else {
                 linearSlideMotor.setPower(0.0);
+            }
+
+            if (gamepad2.left_bumper) {
+                relicSlide.setPower(0.5);
+            } else {
+                relicSlide.setPower(0.0);
+            }
+
+            // Jewel stuff
+            if (gamepad1.dpad_up) {
+                verticalJewel.setPosition(Range.clip(verticalJewel.getPosition() + 0.01, 0.0, 1.0));
+            } else if (gamepad1.dpad_down) {
+                verticalJewel.setPosition(Range.clip(verticalJewel.getPosition() - 0.01, 0.0, 1.0));
+            } else if (gamepad1.dpad_right) {
+                horizontalJewel.setPosition(Range.clip(horizontalJewel.getPosition() + 0.01, 0.0, 1.0)); // possibly, position is speed?
+            } else if (gamepad1.dpad_left) {
+                horizontalJewel.setPosition(Range.clip(horizontalJewel.getPosition() - 0.01, 0.0, 1.0)); // possibly, position is speed?
+            }
+
+            // Grabber stuff
+            // 0.53994 = down
+            if (gamepad2.dpad_up) {
+                relicRotater.setPosition(Range.clip(relicRotater.getPosition() + 0.001, 0.4, 0.6));
+            } else if (gamepad2.dpad_down) {
+                relicRotater.setPosition(Range.clip(relicRotater.getPosition() - 0.001, 0.4, 0.6));
+            }
+            telemetry.addData("RelicRotater: ", relicRotater.getPosition());
+            if (gamepad2.dpad_left) {
+                relicGrabber.setPosition(Range.clip(relicGrabber.getPosition() + 0.01, 0.0, 0.55));
+            } else if (gamepad2.dpad_right) {
+                relicGrabber.setPosition(Range.clip(relicGrabber.getPosition() - 0.01, 0.0, 0.55));
+            }
+            telemetry.addData("Grabber: ", relicGrabber.getPosition());
+
+            if (gamepad2.left_trigger > 0) {
+                relicGrabber.setPosition(Range.clip(relicGrabber.getPosition() + 0.05, -1.0, 1.0));
+            } else if (gamepad2.right_trigger > 0) {
+                relicGrabber.setPosition(Range.clip(relicGrabber.getPosition() - 0.05, -1.0, 1.0));
             }
 
 

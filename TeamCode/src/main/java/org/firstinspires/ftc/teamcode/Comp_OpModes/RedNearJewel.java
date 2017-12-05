@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.Resources.Functions;
 /**
  * Created by abhin on 10/23/2017.
  */
-@Autonomous(name = "RedNear",group = "Auton")
-public class RedNear extends LinearOpMode {
+@Autonomous(name = "RedNearJewel",group = "Auton")
+public class RedNearJewel extends LinearOpMode {
     RelicRecoveryVuMark seenMark = RelicRecoveryVuMark.UNKNOWN;
     ElapsedTime runtime = new ElapsedTime();
     double timeOutS = 5.0;
@@ -27,20 +27,20 @@ public class RedNear extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //TODO HardwareBot Initialization
         HardwareBot bot = new HardwareBot();
         bot.init(hardwareMap);
         // set servos to close upon initialization
+        bot.leftGrabServo.setPosition(0.5);
+        bot.rightGrabServo.setPosition(0.5);
+        bot.horizontalJewel.setPosition(0.5); // will need to be changed
+        bot.verticalJewel.setPosition(1.0); // will need to be changed
         //TODO Calibrate the Light Sensor
         telemetry.addData("Status: ","Initilization Complete");
         telemetry.update();
 
         waitForStart();
-        //TODO Vuforia Trackables Activate
         telemetry.addData("Status: ","Start reached");
         telemetry.update();
-        bot.leftGrabServo.setPosition(0.5);
-        bot.rightGrabServo.setPosition(0.5);
         bot.relicTrackables.activate();
         telemetry.addData("Status: ","Trackables activated");
         telemetry.update();
@@ -59,6 +59,26 @@ public class RedNear extends LinearOpMode {
         telemetry.update();
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
+        //bot.verticalJewel.setPosition(1.0);
+        //TODO Convert this into actual code with values that work
+
+        //See initialization positions at top
+        // assumes we are using MRColorSensor
+        bot.verticalJewel.setPosition(0.2);
+        sleep(1000);
+        if (bot.colorSensor.red() > bot.colorSensor.blue()) {
+            bot.horizontalJewel.setPosition(0.2);
+            telemetry.addData("DatColorSensor", bot.colorSensor.red());
+            telemetry.update();
+        } else {
+            bot.horizontalJewel.setPosition(0.8);
+        }
+        sleep(500);
+        //set to same as initialized position
+        bot.horizontalJewel.setPosition(0.5);
+        bot.verticalJewel.setPosition(1.0);
+
+
         bot.linearSlideMotor.setPower(0.5);
         sleep(400);
         bot.linearSlideMotor.setPower(0.0);
@@ -67,11 +87,11 @@ public class RedNear extends LinearOpMode {
         //Move Forward On Ramp
         // angles used to be here
 
-        runToTarget(bot, 3.0, 0.4);
+        runToTarget(bot, 3.0, 0.25);
 
         sleep(1000);
 
-        runToTarget(bot, 1.0, 0.4);
+        runToTarget(bot, 1.0, 0.25);
 
         sleep(1000);
 
@@ -145,7 +165,7 @@ public class RedNear extends LinearOpMode {
                 telemetry.update();
                 idle();
             }
-            
+
         }
         bot.leftFrontMotor.setPower(0.0);
         bot.leftBackMotor.setPower(0.0);
@@ -203,12 +223,12 @@ public class RedNear extends LinearOpMode {
         bot.leftBackMotor.setPower(0.25);
         bot.rightBackMotor.setPower(-0.25);
         bot.rightFrontMotor.setPower(-0.25);
-        sleep(500);
+        sleep(200);
         bot.leftFrontMotor.setPower(-0.25);
         bot.leftBackMotor.setPower(-0.25);
         bot.rightBackMotor.setPower(0.25);
         bot.rightFrontMotor.setPower(0.25);
-        sleep(500);
+        sleep(200);
 
         bot.leftFrontMotor.setPower(-0.25);
         bot.leftBackMotor.setPower(-0.25);
@@ -219,6 +239,8 @@ public class RedNear extends LinearOpMode {
         bot.leftBackMotor.setPower(0);
         bot.rightBackMotor.setPower(0);
         bot.rightFrontMotor.setPower(0);
+
+
     }
 
     public void turn90(HardwareBot bot) {
@@ -281,3 +303,4 @@ public class RedNear extends LinearOpMode {
     }
 
 }
+
