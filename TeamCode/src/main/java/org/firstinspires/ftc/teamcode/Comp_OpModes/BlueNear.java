@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.Resources.Functions;
 /**
  * Created by abhin on 10/23/2017.
  */
-@Autonomous(name = "RedNearJewel",group = "Auton")
-public class RedNearJewel extends LinearOpMode {
+@Autonomous(name = "BlueNear",group = "Auton")
+public class BlueNear extends LinearOpMode {
     RelicRecoveryVuMark seenMark = RelicRecoveryVuMark.UNKNOWN;
     ElapsedTime runtime = new ElapsedTime();
     double timeOutS = 5.0;
@@ -27,20 +27,20 @@ public class RedNearJewel extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //TODO HardwareBot Initialization
         HardwareBot bot = new HardwareBot();
         bot.init(hardwareMap);
+        // set servos to close upon initialization
         //TODO Calibrate the Light Sensor
         telemetry.addData("Status: ","Initilization Complete");
         telemetry.update();
 
         waitForStart();
-        bot.leftGrabServo.setPosition(0.5);
-        bot.rightGrabServo.setPosition(0.5);
-        bot.horizontalJewel.setPosition(0.5); // will need to be changed
-        bot.verticalJewel.setPosition(1.0); // will need to be changed
+        //TODO Vuforia Trackables Activate
         telemetry.addData("Status: ","Start reached");
         telemetry.update();
-        bot.relicRotater.setPosition(0.45);
+        bot.leftGrabServo.setPosition(0.5);
+        bot.rightGrabServo.setPosition(0.5);
         bot.relicTrackables.activate();
         telemetry.addData("Status: ","Trackables activated");
         telemetry.update();
@@ -59,36 +59,6 @@ public class RedNearJewel extends LinearOpMode {
         telemetry.update();
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        //bot.verticalJewel.setPosition(1.0);
-        //TODO Convert this into actual code with values that work
-
-        //See initialization positions at top
-        // assumes we are using MRColorSensor
-        bot.verticalJewel.setPosition(0.2);
-        sleep(2500);
-        if (bot.colorSensor.red() > bot.colorSensor.blue()) {
-            while (opModeIsActive() && bot.horizontalJewel.getPosition() > 0.2) {
-                bot.horizontalJewel.setPosition(bot.horizontalJewel.getPosition() - 0.05);
-                idle();
-            }
-            telemetry.addData("DatColorSensor", bot.colorSensor.red());
-            telemetry.update();
-        } else {
-            while (opModeIsActive() && bot.horizontalJewel.getPosition() < 0.8) {
-                bot.horizontalJewel.setPosition(bot.horizontalJewel.getPosition() + 0.05);
-                idle();
-            }
-            telemetry.addData("DatColorSensor", bot.colorSensor.red());
-            telemetry.update();
-        }
-        sleep(500);
-        //set to same as initialized position
-        bot.verticalJewel.setPosition(1.0);
-        sleep(500);
-        bot.horizontalJewel.setPosition(0);
-        sleep(500);
-
-
         bot.linearSlideMotor.setPower(0.5);
         sleep(400);
         bot.linearSlideMotor.setPower(0.0);
@@ -97,11 +67,11 @@ public class RedNearJewel extends LinearOpMode {
         //Move Forward On Ramp
         // angles used to be here
 
-        runToTarget(bot, 3.0, 0.25);
+        runToTarget(bot, -3.0, -0.4);
 
         sleep(1000);
 
-        runToTarget(bot, 1.0, 0.25);
+        runToTarget(bot, -1.0, -0.4);
 
         sleep(1000);
 
@@ -113,10 +83,10 @@ public class RedNearJewel extends LinearOpMode {
 
         //Set Power of Motors
         // 0.4 does work for this
-        bot.leftFrontMotor.setPower(0.25);
-        bot.leftBackMotor.setPower(0.25);
-        bot.rightBackMotor.setPower(0.25);
-        bot.rightFrontMotor.setPower(0.25);
+        bot.leftFrontMotor.setPower(-0.25);
+        bot.leftBackMotor.setPower(-0.25);
+        bot.rightBackMotor.setPower(-0.25);
+        bot.rightFrontMotor.setPower(-0.25);
 
         // Get Current Y Axis Angle
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -191,24 +161,24 @@ public class RedNearJewel extends LinearOpMode {
         //Encoder Drive Forward based on the seen Mark
         switch (seenMark){
             case RIGHT:
-                distInInches = 6.0;
+                distInInches = -6.0;
                 //6 inches
-                runToTarget(bot,distInInches,0.25);
+                runToTarget(bot,distInInches,-0.25);
                 break;
             case CENTER:
-                distInInches = 14.0;
+                distInInches = -14.0;
                 // 14 inches
-                runToTarget(bot, distInInches, 0.25);
+                runToTarget(bot, distInInches, -0.25);
                 break;
             case LEFT:
-                distInInches = 22.0;
+                distInInches = -22.0;
                 // 22 inches
-                runToTarget(bot, distInInches, 0.25);
+                runToTarget(bot, distInInches, -0.25);
                 break;
         }
 
         //Turn 90 based on IMU
-        turn90(bot);
+        turnXDegrees(bot, -90);
 
         //TODO Drive Forward a constant Distance Encoder Drive
         runToTarget(bot,6.00,0.25);
@@ -233,12 +203,12 @@ public class RedNearJewel extends LinearOpMode {
         bot.leftBackMotor.setPower(0.25);
         bot.rightBackMotor.setPower(-0.25);
         bot.rightFrontMotor.setPower(-0.25);
-        sleep(200);
+        sleep(500);
         bot.leftFrontMotor.setPower(-0.25);
         bot.leftBackMotor.setPower(-0.25);
         bot.rightBackMotor.setPower(0.25);
         bot.rightFrontMotor.setPower(0.25);
-        sleep(200);
+        sleep(500);
 
         bot.leftFrontMotor.setPower(-0.25);
         bot.leftBackMotor.setPower(-0.25);
@@ -249,16 +219,14 @@ public class RedNearJewel extends LinearOpMode {
         bot.leftBackMotor.setPower(0);
         bot.rightBackMotor.setPower(0);
         bot.rightFrontMotor.setPower(0);
-
-
     }
 
-    public void turn90(HardwareBot bot) {
+    public void turnXDegrees(HardwareBot bot, int degrees) {
         double turnPower = 0.3;
 
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double initialAngle = angles.firstAngle;
-        double targetAngle = initialAngle - 90;
+        double targetAngle = initialAngle + degrees;
         bot.leftFrontMotor.setPower(turnPower);
         bot.leftBackMotor.setPower(turnPower);
         bot.rightBackMotor.setPower(-1 * turnPower);

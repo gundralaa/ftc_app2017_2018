@@ -178,7 +178,7 @@ public class RedNear extends LinearOpMode {
         }
 
         //Turn 90 based on IMU
-        turn90(bot);
+        turnXDegrees(bot, -90);
 
         //TODO Drive Forward a constant Distance Encoder Drive
         runToTarget(bot,6.00,0.25);
@@ -221,12 +221,12 @@ public class RedNear extends LinearOpMode {
         bot.rightFrontMotor.setPower(0);
     }
 
-    public void turn90(HardwareBot bot) {
+    public void turnXDegrees(HardwareBot bot, int degrees) {
         double turnPower = 0.3;
 
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double initialAngle = angles.firstAngle;
-        double targetAngle = initialAngle - 90;
+        double targetAngle = initialAngle + degrees;
         bot.leftFrontMotor.setPower(turnPower);
         bot.leftBackMotor.setPower(turnPower);
         bot.rightBackMotor.setPower(-1 * turnPower);

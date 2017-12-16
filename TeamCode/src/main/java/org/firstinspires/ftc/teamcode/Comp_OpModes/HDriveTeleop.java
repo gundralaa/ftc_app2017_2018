@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Comp_OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -16,6 +17,7 @@ public class HDriveTeleop extends LinearOpMode {
     DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor, hDriveMotor, linearSlideMotor, relicSlide;
     Servo leftGrabServo, rightGrabServo, horizontalJewel, relicGrabber, relicRotater, verticalJewel;
     double lPower, rPower, hPower, forwardPower, turningPower, lTrigger, rTrigger;
+    ColorSensor colorSensor;
     boolean buttonWasOffX = true;
     boolean buttonWasOffY = true;
     double leftPosition = 1.0;
@@ -45,6 +47,9 @@ public class HDriveTeleop extends LinearOpMode {
         horizontalJewel = hardwareMap.servo.get("hJewel"); // 180
         relicRotater = hardwareMap.servo.get("rRotater");
         relicGrabber = hardwareMap.servo.get("rGrabber");
+        verticalJewel = hardwareMap.servo.get("vJewel");
+        horizontalJewel = hardwareMap.servo.get("hJewel");
+        colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color");
 /*
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -152,15 +157,15 @@ public class HDriveTeleop extends LinearOpMode {
             // Grabber stuff
             // 0.53994 = down
             if (gamepad2.dpad_up) {
-                relicRotater.setPosition(Range.clip(relicRotater.getPosition() + 0.001, 0.4, 0.6));
+                relicRotater.setPosition(Range.clip(relicRotater.getPosition() + 0.005, 0.4, 0.6));
             } else if (gamepad2.dpad_down) {
-                relicRotater.setPosition(Range.clip(relicRotater.getPosition() - 0.001, 0.4, 0.6));
+                relicRotater.setPosition(Range.clip(relicRotater.getPosition() - 0.005, 0.4, 0.6));
             }
             telemetry.addData("RelicRotater: ", relicRotater.getPosition());
             if (gamepad2.dpad_left) {
-                relicGrabber.setPosition(Range.clip(relicGrabber.getPosition() + 0.01, 0.0, 0.55));
+                relicGrabber.setPosition(Range.clip(relicGrabber.getPosition() + 0.05, 0.0, 0.55));
             } else if (gamepad2.dpad_right) {
-                relicGrabber.setPosition(Range.clip(relicGrabber.getPosition() - 0.01, 0.0, 0.55));
+                relicGrabber.setPosition(Range.clip(relicGrabber.getPosition() - 0.05, 0.0, 0.55));
             }
             telemetry.addData("Grabber: ", relicGrabber.getPosition());
 
@@ -173,6 +178,7 @@ public class HDriveTeleop extends LinearOpMode {
 
             telemetry.addData("Right Position: ", rightPosition);
             telemetry.addData("Left Position: ", leftPosition);
+            telemetry.addData("Color Sensor (R G B): ", (colorSensor.red() + " " + colorSensor.blue() + " " + colorSensor.green()));
             telemetry.update();
 
             idle();
