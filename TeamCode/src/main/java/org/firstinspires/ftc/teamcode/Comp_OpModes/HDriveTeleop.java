@@ -82,8 +82,9 @@ public class HDriveTeleop extends LinearOpMode {
 
         leftGrabServo.setPosition(leftPosition);
         rightGrabServo.setPosition(rightPosition);
-        horizontalJewel.setPosition(0.0);
-        relicRotater.setPosition(0.6);
+        horizontalJewel.setPosition(0.5);
+        verticalJewel.setPosition(1.0);
+        relicRotater.setPosition(0.48);
         relicGrabber.setPosition(0.0);
         boolean drivingSlow = false;
         while (opModeIsActive()) {

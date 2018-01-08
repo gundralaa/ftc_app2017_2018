@@ -40,7 +40,7 @@ public class RedNearJewel extends LinearOpMode {
         bot.verticalJewel.setPosition(1.0); // will need to be changed
         telemetry.addData("Status: ","Start reached");
         telemetry.update();
-        bot.relicRotater.setPosition(0.45);
+        bot.relicRotater.setPosition(0.48);
         bot.relicTrackables.activate();
         telemetry.addData("Status: ","Trackables activated");
         telemetry.update();
@@ -85,7 +85,7 @@ public class RedNearJewel extends LinearOpMode {
         //set to same as initialized position
         bot.verticalJewel.setPosition(1.0);
         sleep(500);
-        bot.horizontalJewel.setPosition(0);
+        bot.horizontalJewel.setPosition(0.0);
         sleep(500);
 
 
