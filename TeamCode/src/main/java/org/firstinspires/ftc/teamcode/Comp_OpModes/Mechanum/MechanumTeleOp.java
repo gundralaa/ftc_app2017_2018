@@ -69,6 +69,10 @@ public class MechanumTeleOp extends LinearOpMode {
                 bot.relicRotater.setPosition(Range.clip(bot.relicRotater.getPosition() + 0.005, 0.4, 0.6));
             } else if (gamepad2.dpad_down) {
                 bot.relicRotater.setPosition(Range.clip(bot.relicRotater.getPosition() - 0.005, 0.4, 0.6));
+            } else if (gamepad2.dpad_left) {
+                bot.relicGrabber.setPosition(Range.clip(bot.relicGrabber.getPosition(), 0.0, 1.0) + 0.05);
+            } else if (gamepad2.dpad_right) {
+                bot.relicGrabber.setPosition(Range.clip(bot.relicGrabber.getPosition(), 0.0, 1.0) - 0.05);
             }
             telemetry.addData("RelicRotater: ", bot.relicRotater.getPosition());
 

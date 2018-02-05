@@ -37,8 +37,8 @@ public class RedNear extends LinearOpMode {
         //TODO Vuforia Trackables Activate
         telemetry.addData("Status: ","Start reached");
         telemetry.update();
-        bot.leftGrabServo.setPosition(0.5);
-        bot.rightGrabServo.setPosition(0.5);
+        bot.leftGrabServo.setPosition(0.45);
+        bot.rightGrabServo.setPosition(0.55);
         bot.relicTrackables.activate();
         telemetry.addData("Status: ","Trackables activated");
         telemetry.update();
@@ -56,6 +56,34 @@ public class RedNear extends LinearOpMode {
         telemetry.addData("VUMARK", seenMark.name());
         telemetry.update();
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        bot.verticalJewel.setPosition(0.2);
+        sleep(2500);
+        if (bot.colorSensor.red() > bot.colorSensor.blue()) {
+            while (opModeIsActive() && bot.horizontalJewel.getPosition() > 0.2) {
+                bot.horizontalJewel.setPosition(bot.horizontalJewel.getPosition() - 0.05);
+                telemetry.addData("Bot Horizontal Jewel", bot.horizontalJewel.getPosition());
+                telemetry.update();
+                idle();
+            }
+            telemetry.addData("DatColorSensor", bot.colorSensor.red());
+            telemetry.update();
+        } else {
+            while (opModeIsActive() && bot.horizontalJewel.getPosition() < 0.8) {
+                bot.horizontalJewel.setPosition(bot.horizontalJewel.getPosition() + 0.05);
+                telemetry.addData("Bot Horizontal Jewel", bot.horizontalJewel.getPosition());
+                telemetry.update();
+                idle();
+            }
+            telemetry.addData("DatColorSensor", bot.colorSensor.red());
+            telemetry.update();
+        }
+        sleep(500);
+        //set to same as initialized position
+        bot.verticalJewel.setPosition(1.0);
+        sleep(700);
+        bot.horizontalJewel.setPosition(0.0);
+        sleep(500);
 
         bot.linearSlideMotor.setPower(0.5);
         sleep(400);

@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.Resources.Functions;
 /**
  * Created by abhin on 10/23/2017.
  */
-@Autonomous(name = "BlueNear",group = "Auton")
-public class BlueNear extends LinearOpMode {
+//@Autonomous(name = "BlueNearObsolete",group = "Auton")
+public class BlueNearObsolete extends LinearOpMode {
     RelicRecoveryVuMark seenMark = RelicRecoveryVuMark.UNKNOWN;
     ElapsedTime runtime = new ElapsedTime();
     double timeOutS = 5.0;

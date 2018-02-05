@@ -20,7 +20,7 @@ public class HardwareBot {
     public VuforiaLocalizer vuforia;
     public VuforiaTrackables relicTrackables;
     public DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor, linearSlideMotor, relicSlideMotor;
-    public Servo leftGrabServo, rightGrabServo, verticalJewel, horizontalJewel, relicRotater;
+    public Servo leftGrabServo, rightGrabServo, verticalJewel, horizontalJewel, relicRotater, relicGrabber;
     public BNO055IMU imu;
     public HardwareMap lmap;
     public ColorSensor colorSensor;
@@ -44,22 +44,23 @@ public class HardwareBot {
         verticalJewel = lmap.servo.get("vJewel");
         horizontalJewel = lmap.servo.get("hJewel");
         relicRotater = lmap.servo.get("rRotater");
+        relicGrabber = lmap.servo.get("rGrabber");
 
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
 
 
         leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
         leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Vuforia
         int cameraMonitorViewId = lmap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", lmap.appContext.getPackageName());

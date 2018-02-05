@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Comp_OpModes.HardwareBot;
 /**
  * Created by abhin on 10/23/2017.
  */
-@Autonomous(name = "RedNear",group = "Auton")
+@Autonomous(name = "RedFar",group = "Auton")
 public class RedFar extends LinearOpMode {
     RelicRecoveryVuMark seenMark = RelicRecoveryVuMark.UNKNOWN;
     ElapsedTime runtime = new ElapsedTime();
@@ -37,8 +37,8 @@ public class RedFar extends LinearOpMode {
         //TODO Vuforia Trackables Activate
         telemetry.addData("Status: ","Start reached");
         telemetry.update();
-        bot.leftGrabServo.setPosition(0.5);
-        bot.rightGrabServo.setPosition(0.5);
+        bot.leftGrabServo.setPosition(0.45);
+        bot.rightGrabServo.setPosition(0.55);
         bot.relicTrackables.activate();
         telemetry.addData("Status: ","Trackables activated");
         telemetry.update();
@@ -56,6 +56,29 @@ public class RedFar extends LinearOpMode {
         telemetry.addData("VUMARK", seenMark.name());
         telemetry.update();
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        bot.verticalJewel.setPosition(0.2);
+        sleep(2500);
+        if (bot.colorSensor.red() > bot.colorSensor.blue()) {
+            while (opModeIsActive() && bot.horizontalJewel.getPosition() > 0.2) {
+                bot.horizontalJewel.setPosition(bot.horizontalJewel.getPosition() - 0.05);
+                idle();
+            }
+            telemetry.addData("DatColorSensor", bot.colorSensor.red());
+            telemetry.update();
+        } else {
+            while (opModeIsActive() && bot.horizontalJewel.getPosition() < 0.8) {
+                bot.horizontalJewel.setPosition(bot.horizontalJewel.getPosition() + 0.05);
+                idle();
+            }
+            telemetry.addData("DatColorSensor", bot.colorSensor.red());
+            telemetry.update();
+        }
+        sleep(500);
+        //set to same as initialized position
+        bot.verticalJewel.setPosition(1.0);
+        sleep(700);
+        bot.horizontalJewel.setPosition(0.0);
+        sleep(500);
 
         bot.linearSlideMotor.setPower(0.5);
         sleep(400);
