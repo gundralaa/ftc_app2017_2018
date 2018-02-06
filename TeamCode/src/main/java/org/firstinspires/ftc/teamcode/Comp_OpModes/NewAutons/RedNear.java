@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Comp_OpModes.NewAutons;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -26,7 +27,7 @@ public class RedNear extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //TODO HardwareBot Initialization
-        org.firstinspires.ftc.teamcode.Comp_OpModes.HardwareBot bot = new org.firstinspires.ftc.teamcode.Comp_OpModes.HardwareBot();
+        HardwareBot bot = new HardwareBot();
         bot.init(hardwareMap);
         // set servos to close upon initialization
         //TODO Calibrate the Light Sensor
@@ -34,11 +35,13 @@ public class RedNear extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+
         //TODO Vuforia Trackables Activate
         telemetry.addData("Status: ","Start reached");
         telemetry.update();
         bot.leftGrabServo.setPosition(0.45);
         bot.rightGrabServo.setPosition(0.55);
+        bot.horizontalJewel.setPosition(0.5);
         bot.relicTrackables.activate();
         telemetry.addData("Status: ","Trackables activated");
         telemetry.update();
@@ -86,7 +89,7 @@ public class RedNear extends LinearOpMode {
         sleep(500);
 
         bot.linearSlideMotor.setPower(0.5);
-        sleep(400);
+        sleep(500);
         bot.linearSlideMotor.setPower(0.0);
 
         sleep(500);
@@ -247,7 +250,7 @@ public class RedNear extends LinearOpMode {
         bot.rightFrontMotor.setPower(0);
     }
 
-    public void turnXDegrees(org.firstinspires.ftc.teamcode.Comp_OpModes.HardwareBot bot, int degrees) {
+    public void turnXDegrees(HardwareBot bot, int degrees) {
         double turnPower = 0.3;
 
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -268,13 +271,13 @@ public class RedNear extends LinearOpMode {
     }
 
 
-    public void releaseGlyph(org.firstinspires.ftc.teamcode.Comp_OpModes.HardwareBot bot) {
+    public void releaseGlyph(HardwareBot bot) {
         bot.leftGrabServo.setPosition(0.7);
         bot.rightGrabServo.setPosition(0.3);
     }
 
     public static double inchesToEncoder(double inches) {
-        return (1120 / (4 * Math.PI)) * inches;
+        return (1120 / (3.875 * Math.PI)) * inches;
     }
 
     public void runToTarget(HardwareBot bot, double inches, double power) {

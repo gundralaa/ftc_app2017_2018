@@ -39,6 +39,7 @@ public class BlueNear extends LinearOpMode {
         telemetry.update();
         bot.leftGrabServo.setPosition(0.45);
         bot.rightGrabServo.setPosition(0.55);
+        bot.horizontalJewel.setPosition(0.5);
         bot.relicTrackables.activate();
         telemetry.addData("Status: ","Trackables activated");
         telemetry.update();
@@ -81,7 +82,7 @@ public class BlueNear extends LinearOpMode {
         sleep(500);
 
         bot.linearSlideMotor.setPower(0.5);
-        sleep(400);
+        sleep(500);
         bot.linearSlideMotor.setPower(0.0);
 
         sleep(500);
@@ -275,7 +276,7 @@ public class BlueNear extends LinearOpMode {
     }
 
     public static double inchesToEncoder(double inches) {
-        return (1120 / (4 * Math.PI)) * inches;
+        return (1120 / (3.875 * Math.PI)) * inches;
     }
 
     public void runToTarget(HardwareBot bot, double inches, double power) {

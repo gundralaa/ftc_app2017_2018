@@ -24,7 +24,7 @@ public class HardwareBot {
     public BNO055IMU imu;
     public HardwareMap lmap;
     public ColorSensor colorSensor;
-    VuforiaTrackable relicTemplate;
+    public VuforiaTrackable relicTemplate;
 
     public void init(HardwareMap map) {
         lmap = map;
