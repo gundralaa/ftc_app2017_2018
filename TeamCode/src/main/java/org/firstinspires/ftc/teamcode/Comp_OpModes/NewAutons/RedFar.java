@@ -82,7 +82,7 @@ public class RedFar extends LinearOpMode {
         sleep(500);
 
         bot.linearSlideMotor.setPower(0.5);
-        sleep(500);
+        sleep(700);
         bot.linearSlideMotor.setPower(0.0);
 
         sleep(500);
@@ -255,18 +255,33 @@ public class RedFar extends LinearOpMode {
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double initialAngle = angles.firstAngle;
         double targetAngle = initialAngle + degrees;
-        bot.leftFrontMotor.setPower(turnPower);
-        bot.leftBackMotor.setPower(turnPower);
-        bot.rightBackMotor.setPower(-1 * turnPower);
-        bot.rightFrontMotor.setPower(-1 * turnPower);
-        while (angles.firstAngle > targetAngle && opModeIsActive()) {
-            angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            idle();
+        if (degrees < 0) {
+            bot.leftFrontMotor.setPower(turnPower);
+            bot.leftBackMotor.setPower(turnPower);
+            bot.rightBackMotor.setPower(-1 * turnPower);
+            bot.rightFrontMotor.setPower(-1 * turnPower);
+            while (angles.firstAngle > targetAngle && opModeIsActive()) {
+                angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                idle();
+            }
+            bot.leftBackMotor.setPower(0.0);
+            bot.leftFrontMotor.setPower(0.0);
+            bot.rightBackMotor.setPower(0.0);
+            bot.rightFrontMotor.setPower(0.0);
+        } else {
+            bot.leftFrontMotor.setPower(-1 * turnPower);
+            bot.leftBackMotor.setPower(-1 * turnPower);
+            bot.rightBackMotor.setPower(turnPower);
+            bot.rightFrontMotor.setPower(turnPower);
+            while (angles.firstAngle < targetAngle && opModeIsActive()) {
+                angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                idle();
+            }
+            bot.leftBackMotor.setPower(0.0);
+            bot.leftFrontMotor.setPower(0.0);
+            bot.rightBackMotor.setPower(0.0);
+            bot.rightFrontMotor.setPower(0.0);
         }
-        bot.leftBackMotor.setPower(0.0);
-        bot.leftFrontMotor.setPower(0.0);
-        bot.rightBackMotor.setPower(0.0);
-        bot.rightFrontMotor.setPower(0.0);
     }
 
 

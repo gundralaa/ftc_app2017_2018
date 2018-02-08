@@ -82,18 +82,18 @@ public class BlueFar extends LinearOpMode {
         sleep(500);
 
         bot.linearSlideMotor.setPower(0.5);
-        sleep(500);
+        sleep(700);
         bot.linearSlideMotor.setPower(0.0);
 
         sleep(500);
         //Move Forward On Ramp
         // angles used to be here
 
-        runToTarget(bot, 3.0, 0.4);
+        runToTarget(bot, -3.0, -0.4);
 
         sleep(1000);
 
-        runToTarget(bot, 1.0, 0.4);
+        runToTarget(bot, -3.0, -0.4);
 
         sleep(1000);
 
@@ -105,16 +105,16 @@ public class BlueFar extends LinearOpMode {
 
         //Set Power of Motors
         // 0.4 does work for this
-        bot.leftFrontMotor.setPower(0.25);
-        bot.leftBackMotor.setPower(0.25);
-        bot.rightBackMotor.setPower(0.25);
-        bot.rightFrontMotor.setPower(0.25);
+        bot.leftFrontMotor.setPower(-0.25);
+        bot.leftBackMotor.setPower(-0.25);
+        bot.rightBackMotor.setPower(-0.25);
+        bot.rightFrontMotor.setPower(-0.25);
 
         // Get Current Y Axis Angle
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         // Loop While Angle is More Negative the Zero
-        while (angles.secondAngle < -2 && opModeIsActive()) {
+        while (angles.secondAngle > 2 && opModeIsActive()) {
             angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             idle();
         }
@@ -174,12 +174,13 @@ public class BlueFar extends LinearOpMode {
         bot.rightBackMotor.setPower(0.0);
         bot.rightFrontMotor.setPower(0.0);
 
+        runToTarget(bot, -3.0, -0.4);
 
         //If the seenMark is null then set to a default
         if(seenMark == RelicRecoveryVuMark.UNKNOWN){
             seenMark = RelicRecoveryVuMark.RIGHT;
         }
-
+        turnXDegrees(bot, 90);
         //Encoder Drive Forward based on the seen Mark
         switch (seenMark){
             case RIGHT:
@@ -200,7 +201,8 @@ public class BlueFar extends LinearOpMode {
         }
 
         //Turn 90 based on IMU
-        turnXDegrees(bot, -90);
+        turnXDegrees(bot, 90);
+
 
         //TODO Drive Forward a constant Distance Encoder Drive
         runToTarget(bot,6.00,0.25);
@@ -249,18 +251,57 @@ public class BlueFar extends LinearOpMode {
         angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double initialAngle = angles.firstAngle;
         double targetAngle = initialAngle + degrees;
-        bot.leftFrontMotor.setPower(turnPower);
-        bot.leftBackMotor.setPower(turnPower);
-        bot.rightBackMotor.setPower(-1 * turnPower);
-        bot.rightFrontMotor.setPower(-1 * turnPower);
-        while (angles.firstAngle > targetAngle && opModeIsActive()) {
-            angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            idle();
+        boolean isNegative = false;
+        if(targetAngle >= 180){
+            targetAngle = -180 + (targetAngle - 180);
+            isNegative = true;
         }
-        bot.leftBackMotor.setPower(0.0);
-        bot.leftFrontMotor.setPower(0.0);
-        bot.rightBackMotor.setPower(0.0);
-        bot.rightFrontMotor.setPower(0.0);
+        if (degrees < 0) {
+            bot.leftFrontMotor.setPower(turnPower);
+            bot.leftBackMotor.setPower(turnPower);
+            bot.rightBackMotor.setPower(-1 * turnPower);
+            bot.rightFrontMotor.setPower(-1 * turnPower);
+            while (angles.firstAngle > targetAngle && opModeIsActive()) {
+                angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("Angles",angles.firstAngle);
+                telemetry.update();
+                idle();
+            }
+            bot.leftBackMotor.setPower(0.0);
+            bot.leftFrontMotor.setPower(0.0);
+            bot.rightBackMotor.setPower(0.0);
+            bot.rightFrontMotor.setPower(0.0);
+        } else if(isNegative){
+            bot.leftFrontMotor.setPower(-1 * turnPower);
+            bot.leftBackMotor.setPower(-1 * turnPower);
+            bot.rightBackMotor.setPower(turnPower);
+            bot.rightFrontMotor.setPower(turnPower);
+            while (angles.firstAngle > targetAngle && opModeIsActive()) {
+                angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("Angles",angles.firstAngle);
+                telemetry.update();
+                idle();
+            }
+            bot.leftBackMotor.setPower(0.0);
+            bot.leftFrontMotor.setPower(0.0);
+            bot.rightBackMotor.setPower(0.0);
+            bot.rightFrontMotor.setPower(0.0);
+        } else {
+            bot.leftFrontMotor.setPower(-1 * turnPower);
+            bot.leftBackMotor.setPower(-1 * turnPower);
+            bot.rightBackMotor.setPower(turnPower);
+            bot.rightFrontMotor.setPower(turnPower);
+            while (angles.firstAngle < targetAngle && opModeIsActive()) {
+                angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("Angles",angles.firstAngle);
+                telemetry.update();
+                idle();
+            }
+            bot.leftBackMotor.setPower(0.0);
+            bot.leftFrontMotor.setPower(0.0);
+            bot.rightBackMotor.setPower(0.0);
+            bot.rightFrontMotor.setPower(0.0);
+        }
     }
 
 
